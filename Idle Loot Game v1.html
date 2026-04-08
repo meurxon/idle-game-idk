@@ -1,0 +1,3850 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)file:///C:/idle-loot-game/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idle Loot Game</title>
+    <link href="./Idle Loot Game v1_files/css2" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #ffffff;
+            color: #1a1a1a;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Global dark mode font/color adjustments */
+        body.dark {
+            background: #0b0f1a;
+            color: #e6e6e6;
+        }
+        body.dark .section {
+            background: #1a1a2e;
+            border-color: #444;
+        }
+        body.dark .section-title {
+            color: #ffffff;
+        }
+        body.dark .inventory-overlay {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        body.dark .inventory-modal {
+            background: #1a1a2b;
+            border-color: #555;
+        }
+        body.dark .settings-modal {
+            background: #1a1a2e;
+        }
+        body.dark .settings-header {
+            border-color: #444;
+        }
+        body.dark .settings-title {
+            color: #ffffff;
+        }
+        body.dark .settings-item {
+            background: #1b1b2b;
+            border-color: #444;
+        }
+        body.dark .settings-item-name {
+            color: #ffffff;
+        }
+        body.dark .settings-item-desc {
+            color: #bbb;
+        }
+        body.dark .settings-select,
+        body.dark .settings-input {
+            background: #0d0d0d;
+            border-color: #444;
+            color: #ffffff;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cccccc;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #aaaaaa;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #cccccc;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .coin-display {
+            font-size: 28px;
+            color: #b8860b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .coin-icon {
+            font-size: 36px;
+            animation: coinSpin 3s linear infinite;
+        }
+        
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+        
+        .settings-btn:hover {
+            background: #e8e8e8;
+            /* Removed rotating hover: keep button stable on hover for a better UX */
+            transform: none;
+        }
+        
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .settings-overlay.active {
+            display: flex;
+        }
+        
+        .settings-modal {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #cccccc;
+        }
+        
+        .settings-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #1a1a1a;
+        }
+        
+        .settings-close {
+            background: none;
+            border: none;
+            color: #666666;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .settings-close:hover {
+            color: #333333;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .settings-item {
+            background: #f5f5f5;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .settings-item-label {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+        
+        .settings-item-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            color: #1a1a1a;
+        }
+        
+        .settings-item-desc {
+            font-size: 10px;
+            color: #666666;
+        }
+        
+        .settings-toggle {
+            width: 44px;
+            height: 24px;
+            background: #cccccc;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .settings-toggle.active {
+            background: #228b22;
+        }
+        
+        .settings-toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .settings-toggle.active::after {
+            left: 22px;
+        }
+        
+        .settings-select {
+            padding: 6px 10px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1a1a1a;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            min-width: 80px;
+        }
+        
+        .settings-input {
+            padding: 6px 10px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1a1a1a;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+            width: 70px;
+            text-align: center;
+        }
+        
+        .dark .settings-btn {
+            background: #1a1a2e;
+            border-color: #444;
+            color: #ffffff;
+        }
+        
+        .dark .settings-btn:hover {
+            background: #2a2a4e;
+        }
+        
+        .dark .settings-modal {
+            background: #1a1a2e;
+        }
+        
+        .dark .settings-header {
+            border-color: #444;
+        }
+        
+        .dark .settings-title {
+            color: #ffffff;
+        }
+        
+        .dark .settings-close {
+            color: #888;
+        }
+        
+        .dark .settings-grid {
+            background: #1a1a2e;
+        }
+        
+        .dark .settings-item {
+            background: #16213e;
+            border-color: #444;
+        }
+        
+        .dark .settings-item-name {
+            color: #ffffff;
+        }
+        
+        .dark .settings-item-desc {
+            color: #888;
+        }
+        
+        .dark .settings-select,
+        .dark .settings-input {
+            background: #0d0d0d;
+            border-color: #444;
+            color: #ffffff;
+        }
+
+        /* Action buttons in settings panel */
+        .settings-action-btn {
+            padding: 6px 12px;
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+        }
+        
+        @keyframes coinSpin {
+            0%, 100% { transform: rotateY(0deg); }
+            50% { transform: rotateY(180deg); }
+        }
+        
+        .main-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .section {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #cccccc;
+        }
+        
+        .shop-section {
+            grid-column: 1 / -1;
+        }
+        
+        .quest-section {
+            grid-column: 1 / -1;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .quest-item {
+            background: #e8e8e8;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .quest-item:hover {
+            border-color: #333333;
+            transform: translateX(3px);
+        }
+        
+        .quest-item.completed {
+            opacity: 0.6;
+            border-color: #228b22;
+        }
+        
+        .quest-item.completed .quest-progress {
+            color: #228b22;
+        }
+        
+        .quest-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a2e;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        
+        .quest-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .quest-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            color: #fff;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .quest-desc {
+            font-size: 10px;
+            color: #666666;
+            margin-bottom: 4px;
+        }
+        
+        .quest-progress {
+            font-size: 11px;
+            color: #b8860b;
+            font-weight: 600;
+        }
+        
+        .quest-reward {
+            font-size: 12px;
+            color: #228b22;
+            text-align: right;
+            white-space: nowrap;
+        }
+        
+        .quest-item.completed .quest-reward {
+            color: #228b22;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            color: #333333;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .click-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .click-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #e94560, #c73e54);
+            border: 4px solid #888888;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #fff;
+            transition: all 0.1s ease;
+            box-shadow: 0 0 30px rgba(100, 100, 100, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .click-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(233, 69, 96, 0.6);
+        }
+        
+        .click-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .click-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        .click-info {
+            color: #666666;
+            font-size: 14px;
+        }
+        
+        .stats-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .stat {
+            font-size: 14px;
+            color: #228b22;
+        }
+        
+        .crate-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .crate-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .crate {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .crate.basic {
+            background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+            border: 4px solid #a0522d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .crate.premium {
+            background: linear-gradient(180deg, #4a0080 0%, #2d004d 100%);
+            border: 4px solid #8b00ff;
+            box-shadow: 0 10px 30px rgba(139, 0, 255, 0.4);
+        }
+        
+        .crate:hover {
+            transform: translateY(-5px);
+        }
+        
+        .crate.basic:hover {
+            box-shadow: 0 15px 40px rgba(165, 82, 45, 0.6);
+        }
+        
+        .crate.premium:hover {
+            box-shadow: 0 15px 40px rgba(139, 0, 255, 0.6);
+        }
+        
+        .crate.opening {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            20% { transform: translateX(-10px) rotate(-5deg); }
+            40% { transform: translateX(10px) rotate(5deg); }
+            60% { transform: translateX(-10px) rotate(-5deg); }
+            80% { transform: translateX(10px) rotate(5deg); }
+        }
+        
+        .crate-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .crate-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .crate.basic .crate-name {
+            color: #cd853f;
+        }
+        
+        .crate.premium .crate-name {
+            color: #bf00ff;
+        }
+        
+        .crate-price {
+            color: #b8860b;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .crate-chances {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: rgba(13, 13, 13, 0.95);
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 180px;
+            display: none;
+            z-index: 100;
+            margin-bottom: 10px;
+        }
+        
+        .crate:hover .crate-chances {
+            display: block;
+        }
+        
+        .chance-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 3px 0;
+        }
+        
+        .chance-row.common { color: #b0b0b0; }
+        .chance-row.uncommon { color: #228b22; }
+        .chance-row.rare { color: #00aaff; }
+        .chance-row.epic { color: #aa00ff; }
+        .chance-row.legendary { color: #ffaa00; }
+        
+        .shop-section {
+            grid-column: 1 / -1;
+        }
+        
+        .upgrades {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .upgrade-card {
+            background: #e8e8e8;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .upgrade-card:hover {
+            transform: scale(1.05);
+            border-color: #333333;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+        }
+        
+        .upgrade-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .upgrade-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            color: #228b22;
+            margin-bottom: 8px;
+        }
+        
+        .upgrade-desc {
+            font-size: 11px;
+            color: #666666;
+            margin-bottom: 10px;
+            min-height: 28px;
+        }
+        
+        .upgrade-effect {
+            font-size: 11px;
+            color: #b8860b;
+            margin-bottom: 8px;
+        }
+        
+        .upgrade-cost {
+            color: #b8860b;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .upgrade-level {
+            font-size: 12px;
+            color: #333333;
+            margin-top: 5px;
+        }
+        
+        .cheat-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .cheat-panel.active {
+            display: flex;
+        }
+        
+        .cheat-content {
+            background: #f5f5f5;
+            border: 2px solid #e94560;
+            border-radius: 12px;
+            padding: 30px;
+            width: 400px;
+            box-shadow: 0 0 50px rgba(100, 100, 100, 0.4);
+        }
+        
+        .cheat-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #333333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .cheat-option {
+            margin-bottom: 20px;
+        }
+        
+        .cheat-label {
+            display: block;
+            color: #666666;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .cheat-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #dddddd;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .cheat-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #e94560;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .cheat-value {
+            color: #228b22;
+            float: right;
+            font-weight: 600;
+        }
+        
+        .cheat-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #dddddd;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #228b22;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            left: 26px;
+        }
+        
+        .blackjack-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .blackjack-overlay.active {
+            display: flex;
+        }
+        
+        .blackjack-game {
+            background: #f5f5f5;
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 30px;
+            width: 600px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+        }
+        
+        .blackjack-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #b8860b;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .bet-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .bet-amount {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .bet-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dddddd;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .bet-btn:hover {
+            background: #e94560;
+        }
+        
+        .bet-value {
+            font-size: 32px;
+            color: #b8860b;
+            font-weight: 600;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .bet-label {
+            color: #666666;
+            font-size: 14px;
+        }
+        
+        .cards-area {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .hand {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+        }
+        
+        .hand-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .hand-title.winner {
+            color: #228b22;
+        }
+        
+        .hand-title.loser {
+            color: #333333;
+        }
+        
+        .cards {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .card {
+            width: 60px;
+            height: 90px;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card.red {
+            color: #333333;
+        }
+        
+        .card.black {
+            color: #333;
+        }
+        
+        .card-back {
+            background: #f5f5f5;
+            border: 2px solid #ffd700;
+        }
+        
+        .hand-value {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 18px;
+            color: #fff;
+        }
+        
+        .blackjack-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .bj-btn {
+            padding: 12px 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .bj-btn.hit {
+            background: #228b22;
+            color: #ffffff;
+        }
+        
+        .bj-btn.stand {
+            background: #333333;
+            color: #fff;
+        }
+        
+        .bj-btn.deal {
+            background: #b8860b;
+            color: #ffffff;
+        }
+        
+        .bj-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .bj-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .result-display {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            min-height: 30px;
+        }
+        
+        .result-display.win {
+            color: #228b22;
+        }
+        
+        .result-display.lose {
+            color: #333333;
+        }
+        
+        .result-display.push {
+            color: #b8860b;
+        }
+        
+        .hint {
+            text-align: center;
+            color: #666666;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        
+        .floating-text {
+            position: absolute;
+            color: #b8860b;
+            font-size: 20px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 100;
+        }
+        
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+        
+        .result-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f5f5f5;
+            border: 3px solid;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            z-index: 2000;
+            display: none;
+            min-width: 300px;
+        }
+        
+        .result-modal.active {
+            display: block;
+            animation: popIn 0.3s ease-out;
+        }
+        
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .result-rarity {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 24px;
+            color: #b8860b;
+        }
+        
+        .rarity-common { color: #b0b0b0; border-color: #b0b0b0; }
+        .rarity-uncommon { color: #228b22; border-color: #228b22; box-shadow: 0 0 30px rgba(34, 139, 34, 0.3); }
+        .rarity-rare { color: #00aaff; border-color: #00aaff; box-shadow: 0 0 30px rgba(0, 170, 255, 0.4); }
+        .rarity-epic { color: #aa00ff; border-color: #aa00ff; box-shadow: 0 0 30px rgba(170, 0, 255, 0.4); }
+        .rarity-legendary { color: #ffaa00; border-color: #ffaa00; box-shadow: 0 0 30px rgba(255, 170, 0, 0.4); }
+        
+        .crate-glow {
+            position: absolute;
+            inset: -4px;
+            border-radius: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .crate.opening .crate-glow {
+            animation: glowPulse 0.5s ease-in-out;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        .crate-type-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .crate.basic .crate-type-badge {
+            background: #cd853f;
+            color: #000;
+        }
+        
+        .crate.premium .crate-type-badge {
+            background: #bf00ff;
+            color: #fff;
+        }
+        
+        .crate-opening-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .crate-opening-overlay.active {
+            display: flex;
+        }
+        
+        .crate-opening-box {
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            min-width: 500px;
+            box-shadow: 0 0 60px rgba(233, 69, 96, 0.5);
+        }
+        
+        .crate-opening-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #333333;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .crate-spinner {
+            position: relative;
+            width: 300px;
+            height: 120px;
+            margin: 0 auto 30px;
+            overflow: hidden;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            border-radius: 10px;
+        }
+        
+        .crate-items-track {
+            display: flex;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            will-change: transform;
+        }
+        
+        .crate-spin-item {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid transparent;
+        }
+        
+        .crate-spin-item.common { border-color: #b0b0b0; }
+        .crate-spin-item.uncommon { border-color: #228b22; box-shadow: 0 0 15px rgba(34, 139, 34, 0.3); }
+        .crate-spin-item.rare { border-color: #00aaff; box-shadow: 0 0 15px rgba(0, 170, 255, 0.4); }
+        .crate-spin-item.epic { border-color: #aa00ff; box-shadow: 0 0 15px rgba(170, 0, 255, 0.4); }
+        .crate-spin-item.legendary { border-color: #ffaa00; box-shadow: 0 0 15px rgba(255, 170, 0, 0.4); }
+        
+        .crate-spin-item span:first-child {
+            font-size: 36px;
+        }
+        
+        .crate-spin-item span:last-child {
+            font-size: 10px;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 2px;
+        }
+        
+        .crate-spin-item.common span:last-child { color: #b0b0b0; }
+        .crate-spin-item.uncommon span:last-child { color: #228b22; }
+        .crate-spin-item.rare span:last-child { color: #00aaff; }
+        .crate-spin-item.epic span:last-child { color: #aa00ff; }
+        .crate-spin-item.legendary span:last-child { color: #ffaa00; }
+        
+        .crate-center-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 100px;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            z-index: 10;
+            background: linear-gradient(180deg, transparent 0%, rgba(255,215,0,0.1) 50%, transparent 100%);
+        }
+        
+        .crate-center-indicator::before,
+        .crate-center-indicator::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 20px;
+            background: #ffd700;
+            top: -20px;
+        }
+        
+        .crate-center-indicator::before { left: 0; }
+        .crate-center-indicator::after { right: 0; }
+        
+        .crate-result {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .crate-result.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .crate-result-rarity {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .crate-result-rarity.common { color: #b0b0b0; }
+        .crate-result-rarity.uncommon { color: #228b22; text-shadow: 0 0 20px rgba(0, 255, 136, 0.6); }
+        .crate-result-rarity.rare { color: #00aaff; text-shadow: 0 0 20px rgba(0, 170, 255, 0.6); }
+        .crate-result-rarity.epic { color: #aa00ff; text-shadow: 0 0 20px rgba(170, 0, 255, 0.6); }
+        .crate-result-rarity.legendary { color: #ffaa00; text-shadow: 0 0 20px rgba(255, 170, 0, 0.6); animation: legendaryPulse 1s ease-in-out infinite; }
+        
+        @keyframes legendaryPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .crate-result-item {
+            font-size: 80px;
+            margin-bottom: 15px;
+            animation: itemBounce 0.5s ease-out;
+        }
+        
+        @keyframes itemBounce {
+            0% { transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .crate-result-value {
+            font-size: 28px;
+            color: #b8860b;
+            margin-bottom: 20px;
+        }
+        
+        .crate-result-btn {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #228b22 0%, #1e7b1e 100%);
+            border: none;
+            border-radius: 8px;
+            color: #0d0d0d;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .crate-result-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(34, 139, 34, 0.5);
+        }
+        
+        .debug-chat {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 350px;
+            max-height: 300px;
+            background: rgba(13, 13, 13, 0.95);
+            border: 2px solid #2a2a4e;
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        .debug-chat.active {
+            display: flex;
+        }
+        
+        .debug-chat-header {
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #2a2a4e;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .debug-chat-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            color: #228b22;
+            text-transform: uppercase;
+        }
+        
+        .debug-chat-close {
+            background: none;
+            border: none;
+            color: #333333;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .debug-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            max-height: 180px;
+            font-size: 13px;
+        }
+        
+        .debug-msg {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+        
+        .debug-msg.system { color: #666666; }
+        .debug-msg.success { color: #228b22; }
+        .debug-msg.error { color: #333333; }
+        .debug-msg.info { color: #00aaff; }
+        .debug-msg.command { color: #b8860b; }
+        
+        .debug-chat-input-area {
+            padding: 10px;
+            border-top: 1px solid #2a2a4e;
+        }
+        
+        .debug-chat-input-wrapper {
+            position: relative;
+        }
+        
+        .debug-chat-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #e8e8e8;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .debug-chat-input:focus {
+            border-color: #228b22;
+        }
+        
+        .debug-chat-input::placeholder {
+            color: #888888;
+        }
+        
+        .debug-autocomplete {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1a2e;
+            border: 1px solid #cccccc;
+            border-radius: 6px 6px 0 0;
+            max-height: 120px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .debug-autocomplete.active {
+            display: block;
+        }
+        
+        .debug-autocomplete-item {
+            padding: 6px 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+        
+        .debug-autocomplete-item:hover,
+        .debug-autocomplete-item.selected {
+            background: #dddddd;
+        }
+        
+        .debug-autocomplete-item span:first-child {
+            color: #b8860b;
+        }
+        
+        .debug-autocomplete-item span:last-child {
+            color: #666666;
+            font-size: 10px;
+        }
+        
+        .debug-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 15px;
+            background: rgba(13, 13, 13, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            color: #228b22;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .debug-hint.active {
+            display: block;
+        }
+        
+        .inventory-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2a2a4e 0%, #1a1a2e 100%);
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            color: #228b22;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .inventory-btn:hover {
+            background: linear-gradient(135deg, #228b22 0%, #1e7b1e 100%);
+            color: #0d0d0d;
+            transform: scale(1.02);
+        }
+        
+        .inventory-btn span {
+            float: right;
+            background: #228b22;
+            color: #0d0d0d;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        .inventory-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+        }
+        
+        .inventory-overlay.active {
+            display: flex;
+        }
+        
+        .inventory-modal {
+            background: #f5f5f5;
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 25px;
+            width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
+        }
+        
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .inventory-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            color: #228b22;
+        }
+        
+        .inventory-close {
+            background: none;
+            border: none;
+            color: #333333;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .inventory-close:hover {
+            transform: scale(1.2);
+        }
+        
+        .inventory-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .sell-all-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            border: none;
+            border-radius: 8px;
+            color: #0d0d0d;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .sell-all-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .sell-all-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .inventory-counts {
+            display: flex;
+            gap: 15px;
+            margin-left: auto;
+            align-items: center;
+            font-size: 13px;
+            color: #666666;
+        }
+        
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .inventory-item {
+            background: linear-gradient(135deg, #2a2a4e 0%, #1a1a2e 100%);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .inventory-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .inventory-item.common { border: 2px solid #b0b0b0; }
+        .inventory-item.uncommon { border: 2px solid #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+        .inventory-item.rare { border: 2px solid #00aaff; box-shadow: 0 0 10px rgba(0, 170, 255, 0.3); }
+        .inventory-item.epic { border: 2px solid #aa00ff; box-shadow: 0 0 10px rgba(170, 0, 255, 0.3); }
+        .inventory-item.legendary { border: 2px solid #ffaa00; box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
+        
+        .inventory-item-icon {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        
+        .inventory-item-rarity {
+            font-size: 10px;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 3px;
+        }
+        
+        .inventory-item.common .inventory-item-rarity { color: #b0b0b0; }
+        .inventory-item.uncommon .inventory-item-rarity { color: #228b22; }
+        .inventory-item.rare .inventory-item-rarity { color: #00aaff; }
+        .inventory-item.epic .inventory-item-rarity { color: #aa00ff; }
+        .inventory-item.legendary .inventory-item-rarity { color: #ffaa00; }
+        
+        .inventory-item-value {
+            font-size: 11px;
+            color: #b8860b;
+        }
+        
+        .inventory-item-qty {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e94560;
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .inventory-item-sell {
+            margin-top: 5px;
+            padding: 4px 8px;
+            background: #ffd700;
+            border: none;
+            border-radius: 4px;
+            color: #0d0d0d;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .inventory-item-sell:hover {
+            background: #ffaa00;
+        }
+        
+        .inventory-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #666666;
+            font-size: 16px;
+        }
+        
+        .auto-sell-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .auto-sell-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Idle Loot Game</h1>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="coin-display">
+                    <span class="coin-icon">🪙</span>
+                    <span id="coin-count">0</span>
+                </div>
+                <button class="settings-btn" id="settings-btn">⚙️ Settings</button>
+            </div>
+        </header>
+        
+        <div class="main-game">
+            <div class="section">
+                <div class="section-title">Click</div>
+                <div class="click-area">
+                    <button class="click-btn" id="click-btn">CLICK</button>
+                    <div class="click-info">Click to earn coins!</div>
+                    <div class="stats-info">
+                        <div class="stat">Click Value: <span id="click-value">1</span></div>
+                        <div class="stat">Per Second: <span id="auto-rate">0</span></div>
+                        <div class="stat">Multiplier: <span id="multiplier">1.0</span>x</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Loot Crates</div>
+                <div class="crate-section">
+                    <div class="crate-wrapper">
+                        <div class="crate basic" id="crate-basic">
+                            📦
+                            <span class="crate-type-badge">I</span>
+                            <div class="crate-glow"></div>
+                            <div class="crate-chances">
+                                <div class="chance-row common"><span>Common</span><span>50%</span></div>
+                                <div class="chance-row uncommon"><span>Uncommon</span><span>28%</span></div>
+                                <div class="chance-row rare"><span>Rare</span><span>15%</span></div>
+                                <div class="chance-row epic"><span>Epic</span><span>5%</span></div>
+                                <div class="chance-row legendary"><span>Legendary</span><span>2%</span></div>
+                            </div>
+                        </div>
+                        <div class="crate-info">
+                            <div class="crate-name">Basic Crate</div>
+                            <div class="crate-price" id="basic-price">2,000 🪙</div>
+                        </div>
+                    </div>
+                    <div class="crate-wrapper">
+                        <div class="crate premium" id="crate-premium">
+                            🎁
+                            <span class="crate-type-badge">II</span>
+                            <div class="crate-glow"></div>
+                            <div class="crate-chances">
+                                <div class="chance-row common"><span>Common</span><span>35%</span></div>
+                                <div class="chance-row uncommon"><span>Uncommon</span><span>30%</span></div>
+                                <div class="chance-row rare"><span>Rare</span><span>20%</span></div>
+                                <div class="chance-row epic"><span>Epic</span><span>10%</span></div>
+                                <div class="chance-row legendary"><span>Legendary</span><span>5%</span></div>
+                            </div>
+                        </div>
+                        <div class="crate-info">
+                            <div class="crate-name">Premium Crate</div>
+                            <div class="crate-price" id="premium-price">6,000 🪙</div>
+                    </div>
+                </div>
+                <button class="inventory-btn" id="inventory-btn">
+                    📦 Inventory <span id="inventory-count">0 items</span>
+                </button>
+                <div class="auto-sell-toggle">
+                    <div class="toggle-switch" id="auto-sell-toggle"></div>
+                    <span>Auto-sell items (sell immediately)</span>
+                </div>
+            </div>
+            </div>
+            
+            <div class="section shop-section">
+                <div class="section-title">Shop</div>
+                <div class="upgrades">
+                    <div class="upgrade-card" id="upgrade-click">
+                        <div class="upgrade-name">Click Power</div>
+                        <div class="upgrade-desc">Increase coins per click</div>
+                        <div class="upgrade-effect">+1 base</div>
+                        <div class="upgrade-cost">100 🪙</div>
+                        <div class="upgrade-level">Level: <span id="click-level">1</span></div>
+                    </div>
+                    <div class="upgrade-card" id="upgrade-auto">
+                        <div class="upgrade-name">Auto Clicker</div>
+                        <div class="upgrade-desc">Generate coins automatically</div>
+                        <div class="upgrade-effect">+1/sec</div>
+                        <div class="upgrade-cost">200 🪙</div>
+                        <div class="upgrade-level">Level: <span id="auto-level">0</span></div>
+                    </div>
+                    <div class="upgrade-card" id="upgrade-mult">
+                        <div class="upgrade-name">Coin Multiplier</div>
+                        <div class="upgrade-desc">Multiply all coin gains</div>
+                        <div class="upgrade-effect">+0.1x</div>
+                        <div class="upgrade-cost">500 🪙</div>
+                        <div class="upgrade-level">Level: <span id="mult-level">0</span></div>
+                    </div>
+                    <div class="upgrade-card" id="upgrade-basic">
+                        <div class="upgrade-name">Basic Discount</div>
+                        <div class="upgrade-desc">Reduce Basic Crate cost</div>
+                        <div class="upgrade-effect">-5%</div>
+                        <div class="upgrade-cost">800 🪙</div>
+                        <div class="upgrade-level">Level: <span id="basic-disc-level">0</span></div>
+                    </div>
+                    <div class="upgrade-card" id="upgrade-premium">
+                        <div class="upgrade-name">Premium Discount</div>
+                        <div class="upgrade-desc">Reduce Premium Crate cost</div>
+                        <div class="upgrade-effect">-5%</div>
+                        <div class="upgrade-cost">1,500 🪙</div>
+                        <div class="upgrade-level">Level: <span id="premium-disc-level">0</span></div>
+                    </div>
+                    <div class="upgrade-card" id="upgrade-luck">
+                        <div class="upgrade-name">Luck Boost</div>
+                        <div class="upgrade-desc">Better rarity in crates</div>
+                        <div class="upgrade-effect">+2% rare+</div>
+                        <div class="upgrade-cost">2,000 🪙</div>
+                        <div class="upgrade-level">Level: <span id="luck-level">0</span></div>
+                    </div>
+                    <div class="upgrade-card" id="upgrade-value">
+                        <div class="upgrade-name">Item Value</div>
+                        <div class="upgrade-desc">Increase item sell value</div>
+                        <div class="upgrade-effect">+10%</div>
+                        <div class="upgrade-cost">1,200 🪙</div>
+                        <div class="upgrade-level">Level: <span id="value-level">0</span></div>
+                    </div>
+                    <div class="upgrade-card" id="upgrade-spike">
+                        <div class="upgrade-name">Click Spike</div>
+                        <div class="upgrade-desc">Chance for 10x click</div>
+                        <div class="upgrade-effect">+1%</div>
+                        <div class="upgrade-cost">3,000 🪙</div>
+                        <div class="upgrade-level">Level: <span id="spike-level">0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section quest-section">
+                <div class="section-title">🎯 Quests</div>
+                <div class="quest-list" id="quest-list"><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">First Click</div>
+                        <div class="quest-desc">Click 10 times</div>
+                        <div class="quest-progress">0 / 10 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+100</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💰</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Pocket Change</div>
+                        <div class="quest-desc">Earn 100 coins</div>
+                        <div class="quest-progress">0 / 100 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+150</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">📦</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Box Opener</div>
+                        <div class="quest-desc">Open 1 crate</div>
+                        <div class="quest-progress">0 / 1 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+200</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🖱️</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Clicking Spree</div>
+                        <div class="quest-desc">Click 100 times</div>
+                        <div class="quest-progress">0 / 100 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+300</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💎</div>
+                    <div class="quest-info">
+                        <div class="quest-name">First Fortune</div>
+                        <div class="quest-desc">Earn 1,000 coins</div>
+                        <div class="quest-progress">0 / 1,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+500</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">📦</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Collector</div>
+                        <div class="quest-desc">Open 5 crates</div>
+                        <div class="quest-progress">0 / 5 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+800</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⚡</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Power Click</div>
+                        <div class="quest-desc">Reach 5 click value</div>
+                        <div class="quest-progress">1 / 5 (20%)</div>
+                    </div>
+                    <div class="quest-reward">+600</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Gift Hunter</div>
+                        <div class="quest-desc">Open 10 crates</div>
+                        <div class="quest-progress">0 / 10 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+1,200</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💰</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Money Maker</div>
+                        <div class="quest-desc">Earn 10,000 coins</div>
+                        <div class="quest-progress">0 / 10,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+2,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Master</div>
+                        <div class="quest-desc">Click 500 times</div>
+                        <div class="quest-progress">0 / 500 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+1,500</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🤖</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Auto Pilot</div>
+                        <div class="quest-desc">Reach 5 auto/sec</div>
+                        <div class="quest-progress">0 / 5 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+1,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Premium Hunter</div>
+                        <div class="quest-desc">Open 5 premium crates</div>
+                        <div class="quest-progress">0 / 5 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+2,500</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💰</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Coin Tycoon</div>
+                        <div class="quest-desc">Earn 50,000 coins</div>
+                        <div class="quest-progress">0 / 50,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+5,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">📦</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Warehouse</div>
+                        <div class="quest-desc">Open 25 crates</div>
+                        <div class="quest-progress">0 / 25 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+3,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⚡</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Super Click</div>
+                        <div class="quest-desc">Reach 25 click value</div>
+                        <div class="quest-progress">1 / 25 (4%)</div>
+                    </div>
+                    <div class="quest-reward">+2,500</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Blitz</div>
+                        <div class="quest-desc">Click 1,000 times</div>
+                        <div class="quest-progress">0 / 1,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+3,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💎</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Treasure Hunter</div>
+                        <div class="quest-desc">Earn 100,000 coins</div>
+                        <div class="quest-progress">0 / 100,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+8,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Master</div>
+                        <div class="quest-desc">Open 50 crates</div>
+                        <div class="quest-progress">0 / 50 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+5,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🤖</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Automation King</div>
+                        <div class="quest-desc">Reach 25 auto/sec</div>
+                        <div class="quest-progress">0 / 25 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+4,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⚡</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Mega Click</div>
+                        <div class="quest-desc">Reach 50 click value</div>
+                        <div class="quest-progress">1 / 50 (2%)</div>
+                    </div>
+                    <div class="quest-reward">+5,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Premium Enthusiast</div>
+                        <div class="quest-desc">Open 15 premium crates</div>
+                        <div class="quest-progress">0 / 15 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+8,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💎</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Wealthy</div>
+                        <div class="quest-desc">Earn 250,000 coins</div>
+                        <div class="quest-progress">0 / 250,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+15,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Marathon</div>
+                        <div class="quest-desc">Click 2,500 times</div>
+                        <div class="quest-progress">0 / 2,500 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+6,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">📦</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Empire</div>
+                        <div class="quest-desc">Open 100 crates</div>
+                        <div class="quest-progress">0 / 100 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+10,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💰</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Millionaire</div>
+                        <div class="quest-desc">Earn 1,000,000 coins</div>
+                        <div class="quest-progress">0 / 1,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+50,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⚡</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Ultra Click</div>
+                        <div class="quest-desc">Reach 100 click value</div>
+                        <div class="quest-progress">1 / 100 (1%)</div>
+                    </div>
+                    <div class="quest-reward">+10,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🤖</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Auto Empire</div>
+                        <div class="quest-desc">Reach 50 auto/sec</div>
+                        <div class="quest-progress">0 / 50 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+8,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Legend</div>
+                        <div class="quest-desc">Open 200 crates</div>
+                        <div class="quest-progress">0 / 200 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+20,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🏆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">First Legend</div>
+                        <div class="quest-desc">Collect a legendary item</div>
+                        <div class="quest-progress">0 / 1 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+15,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💎</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Diamond Tycoon</div>
+                        <div class="quest-desc">Earn 2,500,000 coins</div>
+                        <div class="quest-progress">0 / 2,500,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+100,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click God</div>
+                        <div class="quest-desc">Click 5,000 times</div>
+                        <div class="quest-progress">0 / 5,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+12,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Premium Collector</div>
+                        <div class="quest-desc">Open 30 premium crates</div>
+                        <div class="quest-progress">0 / 30 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+20,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">📦</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate God</div>
+                        <div class="quest-desc">Open 500 crates</div>
+                        <div class="quest-progress">0 / 500 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+50,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⚡</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Infinite Power</div>
+                        <div class="quest-desc">Reach 200 click value</div>
+                        <div class="quest-progress">1 / 200 (1%)</div>
+                    </div>
+                    <div class="quest-reward">+20,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💰</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Billionaire</div>
+                        <div class="quest-desc">Earn 10,000,000 coins</div>
+                        <div class="quest-progress">0 / 10,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+500,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🤖</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Auto God</div>
+                        <div class="quest-desc">Reach 100 auto/sec</div>
+                        <div class="quest-progress">0 / 100 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+20,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Master</div>
+                        <div class="quest-desc">Open 1,000 crates</div>
+                        <div class="quest-progress">0 / 1,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+100,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💎</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Epic Fortune</div>
+                        <div class="quest-desc">Earn 25,000,000 coins</div>
+                        <div class="quest-progress">0 / 25,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+1,000,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Infinity</div>
+                        <div class="quest-desc">Click 10,000 times</div>
+                        <div class="quest-progress">0 / 10,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+25,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Premium Legend</div>
+                        <div class="quest-desc">Open 50 premium crates</div>
+                        <div class="quest-progress">0 / 50 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+40,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⭐</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Rare Hunter</div>
+                        <div class="quest-desc">Collect 10 rare+ items</div>
+                        <div class="quest-progress">0 / 10 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+15,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🏆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Legendary Hunter</div>
+                        <div class="quest-desc">Collect 3 legendary items</div>
+                        <div class="quest-progress">0 / 3 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+50,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⚡</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Transcendence</div>
+                        <div class="quest-desc">Reach 500 click value</div>
+                        <div class="quest-progress">1 / 500 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+50,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💎</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Mega Tycoon</div>
+                        <div class="quest-desc">Earn 50,000,000 coins</div>
+                        <div class="quest-progress">0 / 50,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+2,500,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">📦</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Collection</div>
+                        <div class="quest-desc">Open 2,500 crates</div>
+                        <div class="quest-progress">0 / 2,500 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+250,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🤖</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Auto Dynasty</div>
+                        <div class="quest-desc">Reach 200 auto/sec</div>
+                        <div class="quest-progress">0 / 200 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+40,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💰</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Ultimate Wealth</div>
+                        <div class="quest-desc">Earn 100,000,000 coins</div>
+                        <div class="quest-progress">0 / 100,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+5,000,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Supremacy</div>
+                        <div class="quest-desc">Click 25,000 times</div>
+                        <div class="quest-progress">0 / 25,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+50,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Premium Dynasty</div>
+                        <div class="quest-desc">Open 100 premium crates</div>
+                        <div class="quest-progress">0 / 100 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+100,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⭐</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Epic Collector</div>
+                        <div class="quest-desc">Collect 25 rare+ items</div>
+                        <div class="quest-progress">0 / 25 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+35,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🏆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Legendary Collection</div>
+                        <div class="quest-desc">Collect 10 legendary items</div>
+                        <div class="quest-progress">0 / 10 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+150,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⚡</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Omnipotence</div>
+                        <div class="quest-desc">Reach 1,000 click value</div>
+                        <div class="quest-progress">1 / 1,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+100,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💎</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Trillionaire</div>
+                        <div class="quest-desc">Earn 1,000,000,000 coins</div>
+                        <div class="quest-progress">0 / 1,000,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+50,000,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">📦</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Universe</div>
+                        <div class="quest-desc">Open 5,000 crates</div>
+                        <div class="quest-progress">0 / 5,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+500,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🤖</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Auto Infinity</div>
+                        <div class="quest-desc">Reach 500 auto/sec</div>
+                        <div class="quest-progress">0 / 500 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+100,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">💰</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Zillionaire</div>
+                        <div class="quest-desc">Earn 5,000,000,000 coins</div>
+                        <div class="quest-progress">0 / 5,000,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+200,000,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👆</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Click Eternal</div>
+                        <div class="quest-desc">Click 50,000 times</div>
+                        <div class="quest-progress">0 / 50,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+100,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">🎁</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Crate Galaxy</div>
+                        <div class="quest-desc">Open 10,000 crates</div>
+                        <div class="quest-progress">0 / 10,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+1,000,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">⭐</div>
+                    <div class="quest-info">
+                        <div class="quest-name">Ultimate Collector</div>
+                        <div class="quest-desc">Collect 50 rare+ items</div>
+                        <div class="quest-progress">0 / 50 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+75,000</div>
+                </div><div class="quest-item">
+                    <div class="quest-icon">👑</div>
+                    <div class="quest-info">
+                        <div class="quest-name">God of Games</div>
+                        <div class="quest-desc">Earn 10,000,000,000 coins</div>
+                        <div class="quest-progress">0 / 10,000,000,000 (0%)</div>
+                    </div>
+                    <div class="quest-reward">+500,000,000</div>
+                </div></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cheat-panel" id="cheat-panel">
+        <div class="cheat-content">
+            <div class="cheat-title">CHEAT PANEL</div>
+            <div class="cheat-option">
+                <label class="cheat-label">
+                    Click Value <span class="cheat-value" id="cheat-click-val">1</span>
+                </label>
+                <input type="range" class="cheat-slider" id="cheat-click" min="1" max="10000" value="1">
+            </div>
+            <div class="cheat-option">
+                <label class="cheat-label">
+                    Auto Clicker Speed <span class="cheat-value" id="cheat-auto-val">0</span>
+                </label>
+                <input type="range" class="cheat-slider" id="cheat-auto" min="0" max="500" value="0">
+            </div>
+            <div class="cheat-option">
+                <label class="cheat-label">
+                    Blackjack Win Rate <span class="cheat-value" id="cheat-win-val">50%</span>
+                </label>
+                <input type="range" class="cheat-slider" id="cheat-win" min="0" max="100" value="50">
+            </div>
+            <div class="cheat-option">
+                <label class="cheat-label">Free Crates</label>
+                <div class="cheat-toggle">
+                    <div class="toggle-switch" id="cheat-free-crate"></div>
+                    <span id="cheat-free-status">OFF</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="blackjack-overlay" id="blackjack-overlay">
+        <div class="blackjack-game">
+            <div class="blackjack-title">🎰 BLACKJACK 🎰</div>
+            <div class="bet-section">
+                <div class="bet-label">Bet Amount</div>
+                <div class="bet-amount">
+                    <button class="bet-btn" id="bet-minus">-</button>
+                    <div class="bet-value" id="bet-amount">100</div>
+                    <button class="bet-btn" id="bet-plus">+</button>
+                </div>
+            </div>
+            <div class="result-display" id="bj-result"></div>
+            <div class="cards-area">
+                <div class="hand">
+                    <div class="hand-title">DEALER</div>
+                    <div class="cards" id="dealer-cards"></div>
+                    <div class="hand-value" id="dealer-value"></div>
+                </div>
+                <div class="hand">
+                    <div class="hand-title" id="player-title">PLAYER</div>
+                    <div class="cards" id="player-cards"></div>
+                    <div class="hand-value" id="player-value"></div>
+                </div>
+            </div>
+            <div class="blackjack-buttons">
+                <button class="bj-btn deal" id="btn-deal">DEAL</button>
+                <button class="bj-btn hit" id="btn-hit" disabled="">HIT</button>
+                <button class="bj-btn stand" id="btn-stand" disabled="">STAND</button>
+            </div>
+            <div class="hint">Press 'B' to close</div>
+        </div>
+    </div>
+    
+    <div class="result-modal" id="result-modal">
+        <div class="result-rarity" id="modal-rarity">Common</div>
+        <div class="result-item" id="modal-item">📦</div>
+        <div class="result-value" id="modal-value">+100 🪙</div>
+    </div>
+    
+    <div class="crate-opening-overlay" id="crate-opening">
+        <div class="crate-opening-box">
+            <div class="crate-opening-title">Opening...</div>
+            <div class="crate-spinner">
+                <div class="crate-center-indicator"></div>
+                <div class="crate-items-track" id="crate-items-track"></div>
+            </div>
+            <div class="crate-result" id="crate-result">
+                <div class="crate-result-rarity" id="crate-result-rarity">Common</div>
+                <div class="crate-result-item" id="crate-result-item">📦</div>
+                <div class="crate-result-value" id="crate-result-value">+100 🪙</div>
+                <button class="crate-result-btn" id="crate-claim-btn">Claim to Inventory</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="inventory-overlay" id="inventory-overlay">
+        <div class="inventory-modal">
+            <div class="inventory-header">
+                <div class="inventory-title">📦 INVENTORY</div>
+                <button class="inventory-close" id="inventory-close">×</button>
+            </div>
+            <div class="inventory-actions">
+                <button class="sell-all-btn" id="sell-all-btn">💰 Sell All</button>
+                <div class="inventory-counts">
+                    <span>Total: <strong id="inv-total-items">0</strong> items</span>
+                    <span>Value: <strong id="inv-total-value">0</strong> 🪙</span>
+                </div>
+            </div>
+            <div class="inventory-grid" id="inventory-grid">
+                <div class="inventory-empty">No items yet! Open some crates!</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="debug-chat" id="debug-chat">
+        <div class="debug-chat-header">
+            <div class="debug-chat-title">Debug Console</div>
+            <button class="debug-chat-close" id="debug-close">×</button>
+        </div>
+        <div class="debug-chat-messages" id="debug-messages">
+            <div class="debug-msg system">Welcome to Debug Console!</div>
+            <div class="debug-msg info">Press / to see available commands</div>
+        </div>
+        <div class="debug-chat-input-area">
+            <div class="debug-chat-input-wrapper">
+                <div class="debug-autocomplete" id="debug-autocomplete"></div>
+                <input type="text" class="debug-chat-input" id="debug-input" placeholder="Type / for commands..." autocomplete="off">
+            </div>
+        </div>
+    </div>
+    
+    <div class="debug-hint" id="debug-hint">Press Q to open Debug Console</div>
+    
+    <div class="settings-overlay" id="settings-overlay">
+        <div class="settings-modal">
+            <div class="settings-header">
+                <div class="settings-title">⚙️ Settings</div>
+                <button class="settings-close" id="settings-close">×</button>
+            </div>
+            <div class="settings-grid" id="settings-grid"></div>
+            <div class="settings-actions" style="display:flex; justify-content:flex-end; gap:8px; padding:12px 0 0 0;">
+                <button id="save-btn" class="settings-action-btn">Save</button>
+                <button id="export-btn" class="settings-action-btn">Export</button>
+                <button id="import-btn" class="settings-action-btn">Import</button>
+                <input type="file" id="import-file" accept="application/json" style="display:none">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameState = {
+            coins: 0,
+            totalCoinsEarned: 0,
+            totalClicks: 0,
+            totalCratesOpened: 0,
+            totalItemsCollected: 0,
+            highestClickValue: 0,
+            clickValue: 1,
+            clickLevel: 1,
+            autoRate: 0,
+            autoLevel: 0,
+            multiplier: 1,
+            multLevel: 0,
+            basicDiscount: 0,
+            basicDiscLevel: 0,
+            premiumDiscount: 0,
+            premiumDiscLevel: 0,
+            luckLevel: 0,
+            itemValueLevel: 0,
+            spikeLevel: 0,
+            basicCost: 2000,
+            premiumCost: 6000,
+            inventory: {},
+            autoSell: false,
+            completedQuests: [],
+            settings: {
+                darkTheme: false,
+                showQuestNotifications: true,
+                showFloatingText: true,
+                showClickEffects: true,
+                autoSave: true,
+                soundEffects: true,
+                showCrateAnimation: true,
+                showInventoryOnCollect: true,
+                compactShop: false,
+                showStats: true,
+                showMultiplier: true,
+                showAutoRate: true,
+                showClickValue: true,
+                showInventoryCount: true,
+                animateCrateOpening: true,
+                showRarityGlow: true,
+                confirmCrateOpen: false,
+                confirmSellAll: true,
+                showDebugOnComplete: true,
+                showQuestProgress: true,
+                showRewardPopup: true,
+                invertScroll: false,
+                reducedMotion: false,
+                highContrast: false,
+                showTimestamps: true,
+                showItemValue: true,
+                showTotalEarned: true,
+                showClickCount: true,
+                showCrateCount: true,
+                groupInventory: true,
+                sortByRarity: true
+            },
+            cheat: {
+                clickValue: 1,
+                autoRate: 0,
+                winRate: 50,
+                freeCrates: false
+            },
+            blackjack: {
+                deck: [],
+                playerHand: [],
+                dealerHand: [],
+                bet: 100,
+                gameOver: true,
+                canHit: false
+            }
+        };
+
+        // Debug console auto-close helpers
+        let debugAutoCloseTimer = null;
+        let debugCommandExecuted = false;
+
+        const rarities = [
+            { name: 'Common', chance: 50, multiplier: 1, color: 'common', items: ['📦', '🧀', '📰', '🔧', '🎮', '🧸', '🎲', '🧩', '📚', '✏️', '🖌️', '📎'] },
+            { name: 'Uncommon', chance: 28, multiplier: 4, color: 'uncommon', items: ['💎', '⚔️', '🛡️', '🔮', '🎯', '🏹', '🗡️', '🪓', '💍', '📿', '🔑', '🎭'] },
+            { name: 'Rare', chance: 15, multiplier: 15, color: 'rare', items: ['🏆', '👑', '💍', '🔱', '⭐', '🌟', '💠', '🎖️', '🏅', '🎗️', '🌹', '🦋'] },
+            { name: 'Epic', chance: 5, multiplier: 50, color: 'epic', items: ['🔥', '⚡', '🌟', '💫', '✨', '🌈', '💥', '🎆', '🌺', '🦄', '🐉', '💎'] },
+            { name: 'Legendary', chance: 2, multiplier: 200, color: 'legendary', items: ['👑', '🏆', '🎆', '🌟', '💎', '🔮', '🦄', '🐉', '🌈', '⚡', '🔥', '✨'] }
+        ];
+
+        const premiumRarities = [
+            { name: 'Common', chance: 35, multiplier: 2, color: 'common', items: ['📦', '🧀', '📰', '🔧', '🎮', '🧸', '🎲', '🧩', '📚', '✏️', '🖌️', '📎'] },
+            { name: 'Uncommon', chance: 30, multiplier: 8, color: 'uncommon', items: ['💎', '⚔️', '🛡️', '🔮', '🎯', '🏹', '🗡️', '🪓', '💍', '📿', '🔑', '🎭'] },
+            { name: 'Rare', chance: 20, multiplier: 30, color: 'rare', items: ['🏆', '👑', '💍', '🔱', '⭐', '🌟', '💠', '🎖️', '🏅', '🎗️', '🌹', '🦋'] },
+            { name: 'Epic', chance: 10, multiplier: 100, color: 'epic', items: ['🔥', '⚡', '🌟', '💫', '✨', '🌈', '💥', '🎆', '🌺', '🦄', '🐉', '💎'] },
+            { name: 'Legendary', chance: 5, multiplier: 500, color: 'legendary', items: ['👑', '🏆', '🎆', '🌟', '💎', '🔮', '🦄', '🐉', '🌈', '⚡', '🔥', '✨'] }
+        ];
+
+        const suits = ['♠️', '♥️', '♦️', '♣️'];
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+        const quests = [
+            { id: 1, icon: '👆', name: 'First Click', desc: 'Click 10 times', type: 'clicks', goal: 10, reward: 100 },
+            { id: 2, icon: '💰', name: 'Pocket Change', desc: 'Earn 100 coins', type: 'coins', goal: 100, reward: 150 },
+            { id: 3, icon: '📦', name: 'Box Opener', desc: 'Open 1 crate', type: 'crates', goal: 1, reward: 200 },
+            { id: 4, icon: '🖱️', name: 'Clicking Spree', desc: 'Click 100 times', type: 'clicks', goal: 100, reward: 300 },
+            { id: 5, icon: '💎', name: 'First Fortune', desc: 'Earn 1,000 coins', type: 'coins', goal: 1000, reward: 500 },
+            { id: 6, icon: '📦', name: 'Crate Collector', desc: 'Open 5 crates', type: 'crates', goal: 5, reward: 800 },
+            { id: 7, icon: '⚡', name: 'Power Click', desc: 'Reach 5 click value', type: 'clickValue', goal: 5, reward: 600 },
+            { id: 8, icon: '🎁', name: 'Gift Hunter', desc: 'Open 10 crates', type: 'crates', goal: 10, reward: 1200 },
+            { id: 9, icon: '💰', name: 'Money Maker', desc: 'Earn 10,000 coins', type: 'coins', goal: 10000, reward: 2000 },
+            { id: 10, icon: '👆', name: 'Click Master', desc: 'Click 500 times', type: 'clicks', goal: 500, reward: 1500 },
+            { id: 11, icon: '🤖', name: 'Auto Pilot', desc: 'Reach 5 auto/sec', type: 'autoRate', goal: 5, reward: 1000 },
+            { id: 12, icon: '🎁', name: 'Premium Hunter', desc: 'Open 5 premium crates', type: 'premiumCrates', goal: 5, reward: 2500 },
+            { id: 13, icon: '💰', name: 'Coin Tycoon', desc: 'Earn 50,000 coins', type: 'coins', goal: 50000, reward: 5000 },
+            { id: 14, icon: '📦', name: 'Crate Warehouse', desc: 'Open 25 crates', type: 'crates', goal: 25, reward: 3000 },
+            { id: 15, icon: '⚡', name: 'Super Click', desc: 'Reach 25 click value', type: 'clickValue', goal: 25, reward: 2500 },
+            { id: 16, icon: '👆', name: 'Click Blitz', desc: 'Click 1,000 times', type: 'clicks', goal: 1000, reward: 3000 },
+            { id: 17, icon: '💎', name: 'Treasure Hunter', desc: 'Earn 100,000 coins', type: 'coins', goal: 100000, reward: 8000 },
+            { id: 18, icon: '🎁', name: 'Crate Master', desc: 'Open 50 crates', type: 'crates', goal: 50, reward: 5000 },
+            { id: 19, icon: '🤖', name: 'Automation King', desc: 'Reach 25 auto/sec', type: 'autoRate', goal: 25, reward: 4000 },
+            { id: 20, icon: '⚡', name: 'Mega Click', desc: 'Reach 50 click value', type: 'clickValue', goal: 50, reward: 5000 },
+            { id: 21, icon: '🎁', name: 'Premium Enthusiast', desc: 'Open 15 premium crates', type: 'premiumCrates', goal: 15, reward: 8000 },
+            { id: 22, icon: '💎', name: 'Wealthy', desc: 'Earn 250,000 coins', type: 'coins', goal: 250000, reward: 15000 },
+            { id: 23, icon: '👆', name: 'Click Marathon', desc: 'Click 2,500 times', type: 'clicks', goal: 2500, reward: 6000 },
+            { id: 24, icon: '📦', name: 'Crate Empire', desc: 'Open 100 crates', type: 'crates', goal: 100, reward: 10000 },
+            { id: 25, icon: '💰', name: 'Millionaire', desc: 'Earn 1,000,000 coins', type: 'coins', goal: 1000000, reward: 50000 },
+            { id: 26, icon: '⚡', name: 'Ultra Click', desc: 'Reach 100 click value', type: 'clickValue', goal: 100, reward: 10000 },
+            { id: 27, icon: '🤖', name: 'Auto Empire', desc: 'Reach 50 auto/sec', type: 'autoRate', goal: 50, reward: 8000 },
+            { id: 28, icon: '🎁', name: 'Crate Legend', desc: 'Open 200 crates', type: 'crates', goal: 200, reward: 20000 },
+            { id: 29, icon: '🏆', name: 'First Legend', desc: 'Collect a legendary item', type: 'legendary', goal: 1, reward: 15000 },
+            { id: 30, icon: '💎', name: 'Diamond Tycoon', desc: 'Earn 2,500,000 coins', type: 'coins', goal: 2500000, reward: 100000 },
+            { id: 31, icon: '👆', name: 'Click God', desc: 'Click 5,000 times', type: 'clicks', goal: 5000, reward: 12000 },
+            { id: 32, icon: '🎁', name: 'Premium Collector', desc: 'Open 30 premium crates', type: 'premiumCrates', goal: 30, reward: 20000 },
+            { id: 33, icon: '📦', name: 'Crate God', desc: 'Open 500 crates', type: 'crates', goal: 500, reward: 50000 },
+            { id: 34, icon: '⚡', name: 'Infinite Power', desc: 'Reach 200 click value', type: 'clickValue', goal: 200, reward: 20000 },
+            { id: 35, icon: '💰', name: 'Billionaire', desc: 'Earn 10,000,000 coins', type: 'coins', goal: 10000000, reward: 500000 },
+            { id: 36, icon: '🤖', name: 'Auto God', desc: 'Reach 100 auto/sec', type: 'autoRate', goal: 100, reward: 20000 },
+            { id: 37, icon: '🎁', name: 'Crate Master', desc: 'Open 1,000 crates', type: 'crates', goal: 1000, reward: 100000 },
+            { id: 38, icon: '💎', name: 'Epic Fortune', desc: 'Earn 25,000,000 coins', type: 'coins', goal: 25000000, reward: 1000000 },
+            { id: 39, icon: '👆', name: 'Click Infinity', desc: 'Click 10,000 times', type: 'clicks', goal: 10000, reward: 25000 },
+            { id: 40, icon: '🎁', name: 'Premium Legend', desc: 'Open 50 premium crates', type: 'premiumCrates', goal: 50, reward: 40000 },
+            { id: 41, icon: '⭐', name: 'Rare Hunter', desc: 'Collect 10 rare+ items', type: 'rareItems', goal: 10, reward: 15000 },
+            { id: 42, icon: '🏆', name: 'Legendary Hunter', desc: 'Collect 3 legendary items', type: 'legendary', goal: 3, reward: 50000 },
+            { id: 43, icon: '⚡', name: 'Click Transcendence', desc: 'Reach 500 click value', type: 'clickValue', goal: 500, reward: 50000 },
+            { id: 44, icon: '💎', name: 'Mega Tycoon', desc: 'Earn 50,000,000 coins', type: 'coins', goal: 50000000, reward: 2500000 },
+            { id: 45, icon: '📦', name: 'Crate Collection', desc: 'Open 2,500 crates', type: 'crates', goal: 2500, reward: 250000 },
+            { id: 46, icon: '🤖', name: 'Auto Dynasty', desc: 'Reach 200 auto/sec', type: 'autoRate', goal: 200, reward: 40000 },
+            { id: 47, icon: '💰', name: 'Ultimate Wealth', desc: 'Earn 100,000,000 coins', type: 'coins', goal: 100000000, reward: 5000000 },
+            { id: 48, icon: '👆', name: 'Click Supremacy', desc: 'Click 25,000 times', type: 'clicks', goal: 25000, reward: 50000 },
+            { id: 49, icon: '🎁', name: 'Premium Dynasty', desc: 'Open 100 premium crates', type: 'premiumCrates', goal: 100, reward: 100000 },
+            { id: 50, icon: '⭐', name: 'Epic Collector', desc: 'Collect 25 rare+ items', type: 'rareItems', goal: 25, reward: 35000 },
+            { id: 51, icon: '🏆', name: 'Legendary Collection', desc: 'Collect 10 legendary items', type: 'legendary', goal: 10, reward: 150000 },
+            { id: 52, icon: '⚡', name: 'Click Omnipotence', desc: 'Reach 1,000 click value', type: 'clickValue', goal: 1000, reward: 100000 },
+            { id: 53, icon: '💎', name: 'Trillionaire', desc: 'Earn 1,000,000,000 coins', type: 'coins', goal: 1000000000, reward: 50000000 },
+            { id: 54, icon: '📦', name: 'Crate Universe', desc: 'Open 5,000 crates', type: 'crates', goal: 5000, reward: 500000 },
+            { id: 55, icon: '🤖', name: 'Auto Infinity', desc: 'Reach 500 auto/sec', type: 'autoRate', goal: 500, reward: 100000 },
+            { id: 56, icon: '💰', name: 'Zillionaire', desc: 'Earn 5,000,000,000 coins', type: 'coins', goal: 5000000000, reward: 200000000 },
+            { id: 57, icon: '👆', name: 'Click Eternal', desc: 'Click 50,000 times', type: 'clicks', goal: 50000, reward: 100000 },
+            { id: 58, icon: '🎁', name: 'Crate Galaxy', desc: 'Open 10,000 crates', type: 'crates', goal: 10000, reward: 1000000 },
+            { id: 59, icon: '⭐', name: 'Ultimate Collector', desc: 'Collect 50 rare+ items', type: 'rareItems', goal: 50, reward: 75000 },
+            { id: 60, icon: '👑', name: 'God of Games', desc: 'Earn 10,000,000,000 coins', type: 'coins', goal: 10000000000, reward: 500000000 }
+        ];
+
+        function getQuestProgress(type) {
+            switch (type) {
+                case 'clicks': return gameState.totalClicks;
+                case 'coins': return gameState.totalCoinsEarned;
+                case 'crates': return gameState.totalCratesOpened;
+                case 'premiumCrates': return gameState.premiumCratesOpened || 0;
+                case 'clickValue': return gameState.clickValue;
+                case 'autoRate': return gameState.autoRate;
+                case 'legendary': return gameState.legendaryItems || 0;
+                case 'rareItems': return gameState.rareItems || 0;
+                default: return 0;
+            }
+        }
+
+        function renderQuests() {
+            const container = document.getElementById('quest-list');
+            container.innerHTML = '';
+            
+            quests.forEach(quest => {
+                const progress = getQuestProgress(quest.type);
+                const completed = gameState.completedQuests.includes(quest.id);
+                const percent = Math.min(100, (progress / quest.goal) * 100);
+                
+                const el = document.createElement('div');
+                el.className = 'quest-item' + (completed ? ' completed' : '');
+                el.innerHTML = `
+                    <div class="quest-icon">${quest.icon}</div>
+                    <div class="quest-info">
+                        <div class="quest-name">${quest.name}</div>
+                        <div class="quest-desc">${quest.desc}</div>
+                        <div class="quest-progress">${Math.min(progress, quest.goal).toLocaleString()} / ${quest.goal.toLocaleString()} (${percent.toFixed(0)}%)</div>
+                    </div>
+                    <div class="quest-reward">${completed ? '✓ Done' : '+' + quest.reward.toLocaleString()}</div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function checkQuests() {
+            let claimed = false;
+            quests.forEach(quest => {
+                if (gameState.completedQuests.includes(quest.id)) return;
+                
+                const progress = getQuestProgress(quest.type);
+                if (progress >= quest.goal) {
+                    gameState.coins += quest.reward;
+                    gameState.completedQuests.push(quest.id);
+                    claimed = true;
+                    addDebugMessage('🎉 Quest Complete: ' + quest.name + ' +' + quest.reward.toLocaleString() + ' coins!', 'success');
+                }
+            });
+            if (claimed) updateUI();
+            renderQuests();
+        }
+
+        function createDeck() {
+            const deck = [];
+            for (const suit of suits) {
+                for (const value of values) {
+                    deck.push({ suit, value });
+                }
+            }
+            return shuffleDeck(deck);
+        }
+
+        function shuffleDeck(deck) {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            return deck;
+        }
+
+        function getCardValue(card) {
+            if (['J', 'Q', 'K'].includes(card.value)) return 10;
+            if (card.value === 'A') return 11;
+            return parseInt(card.value);
+        }
+
+        function calculateHandValue(hand) {
+            let value = 0;
+            let aces = 0;
+            for (const card of hand) {
+                value += getCardValue(card);
+                if (card.value === 'A') aces++;
+            }
+            while (value > 21 && aces > 0) {
+                value -= 10;
+                aces--;
+            }
+            return value;
+        }
+
+        function isBlackjack(hand) {
+            return hand.length === 2 && calculateHandValue(hand) === 21;
+        }
+
+        function calculateUpgradeCost(baseCost, level, growth) {
+            return Math.floor(baseCost * Math.pow(growth, level));
+        }
+
+        function updateUI() {
+            document.getElementById('coin-count').textContent = Math.floor(gameState.coins).toLocaleString();
+            document.getElementById('click-value').textContent = gameState.clickValue;
+            document.getElementById('auto-rate').textContent = gameState.autoRate;
+            document.getElementById('multiplier').textContent = gameState.multiplier.toFixed(1);
+            document.getElementById('click-level').textContent = gameState.clickLevel;
+            document.getElementById('auto-level').textContent = gameState.autoLevel;
+            document.getElementById('mult-level').textContent = gameState.multLevel;
+            document.getElementById('basic-disc-level').textContent = gameState.basicDiscount;
+            document.getElementById('premium-disc-level').textContent = gameState.premiumDiscount;
+            document.getElementById('luck-level').textContent = gameState.luckLevel;
+            document.getElementById('value-level').textContent = gameState.itemValueLevel;
+            document.getElementById('spike-level').textContent = gameState.spikeLevel;
+            
+            const clickCost = calculateUpgradeCost(100, gameState.clickLevel - 1, 1.5);
+            const autoCost = calculateUpgradeCost(200, gameState.autoLevel, 1.5);
+            const multCost = calculateUpgradeCost(500, gameState.multLevel, 1.6);
+            const basicDiscCost = calculateUpgradeCost(800, gameState.basicDiscount, 1.8);
+            const premiumDiscCost = calculateUpgradeCost(1500, gameState.premiumDiscount, 1.8);
+            const luckCost = calculateUpgradeCost(2000, gameState.luckLevel, 1.7);
+            const valueCost = calculateUpgradeCost(1200, gameState.itemValueLevel, 1.5);
+            const spikeCost = calculateUpgradeCost(3000, gameState.spikeLevel, 1.8);
+            
+            document.querySelector('#upgrade-click .upgrade-cost').textContent = clickCost.toLocaleString() + ' 🪙';
+            document.querySelector('#upgrade-auto .upgrade-cost').textContent = autoCost.toLocaleString() + ' 🪙';
+            document.querySelector('#upgrade-mult .upgrade-cost').textContent = multCost.toLocaleString() + ' 🪙';
+            document.querySelector('#upgrade-basic .upgrade-cost').textContent = basicDiscCost.toLocaleString() + ' 🪙';
+            document.querySelector('#upgrade-premium .upgrade-cost').textContent = premiumDiscCost.toLocaleString() + ' 🪙';
+            document.querySelector('#upgrade-luck .upgrade-cost').textContent = luckCost.toLocaleString() + ' 🪙';
+            document.querySelector('#upgrade-value .upgrade-cost').textContent = valueCost.toLocaleString() + ' 🪙';
+            document.querySelector('#upgrade-spike .upgrade-cost').textContent = spikeCost.toLocaleString() + ' 🪙';
+            
+            gameState.basicCost = Math.floor(2000 * (1 - gameState.basicDiscount * 0.05));
+            gameState.premiumCost = Math.floor(6000 * (1 - gameState.premiumDiscount * 0.05));
+            document.getElementById('basic-price').textContent = gameState.basicCost.toLocaleString() + ' 🪙';
+            document.getElementById('premium-price').textContent = gameState.premiumCost.toLocaleString() + ' 🪙';
+            
+            let totalItems = 0;
+            for (const key in gameState.inventory) {
+                totalItems += gameState.inventory[key].quantity;
+            }
+            document.getElementById('inventory-count').textContent = totalItems + ' items';
+            
+            renderQuests();
+            
+            updateCheatUI();
+        }
+
+        function updateCheatUI() {
+            document.getElementById('cheat-click').value = gameState.cheat.clickValue;
+            document.getElementById('cheat-click-val').textContent = gameState.cheat.clickValue;
+            document.getElementById('cheat-auto').value = gameState.cheat.autoRate;
+            document.getElementById('cheat-auto-val').textContent = gameState.cheat.autoRate;
+            document.getElementById('cheat-win').value = gameState.cheat.winRate;
+            document.getElementById('cheat-win-val').textContent = gameState.cheat.winRate + '%';
+            
+            const freeCrateToggle = document.getElementById('cheat-free-crate');
+            if (gameState.cheat.freeCrates) {
+                freeCrateToggle.classList.add('active');
+                document.getElementById('cheat-free-status').textContent = 'ON';
+            } else {
+                freeCrateToggle.classList.remove('active');
+                document.getElementById('cheat-free-status').textContent = 'OFF';
+            }
+        }
+
+        function createFloatingText(x, y, text) {
+            const float = document.createElement('div');
+            float.className = 'floating-text';
+            float.textContent = text;
+            float.style.left = x + 'px';
+            float.style.top = y + 'px';
+            document.body.appendChild(float);
+            setTimeout(() => float.remove(), 1000);
+        }
+
+        function handleClick(e) {
+            let earned = gameState.cheat.freeCrates ? gameState.cheat.clickValue : gameState.clickValue;
+            earned = Math.floor(earned * gameState.multiplier);
+            
+            const spikeChance = gameState.cheat.freeCrates ? 0 : (gameState.spikeLevel * 0.01);
+            if (Math.random() < spikeChance) {
+                earned *= 10;
+                createFloatingText(e.clientX - 30, e.clientY - 20, '🔥 10x SPIKE! +' + earned);
+            } else {
+                createFloatingText(e.clientX - 20, e.clientY - 10, '+' + earned);
+            }
+            
+            gameState.coins += earned;
+            gameState.totalCoinsEarned += earned;
+            gameState.totalClicks++;
+            if (gameState.clickValue > gameState.highestClickValue) {
+                gameState.highestClickValue = gameState.clickValue;
+            }
+            updateUI();
+            checkQuests();
+            
+            e.target.style.transform = 'scale(0.95)';
+            setTimeout(() => e.target.style.transform = '', 100);
+        }
+
+        function getRarityWithLuck(raritiesList) {
+            const luckBonus = gameState.luckLevel * 0.02;
+            const roll = Math.random() * 100;
+            let cumulative = 0;
+            let selectedRarity = raritiesList[0];
+            
+            for (let i = 0; i < raritiesList.length; i++) {
+                const rarity = raritiesList[i];
+                let chance = rarity.chance;
+                if (i >= 2) {
+                    chance += luckBonus * 100 / (raritiesList.length - 2);
+                }
+                cumulative += chance;
+                if (roll < cumulative) {
+                    selectedRarity = rarity;
+                    break;
+                }
+            }
+            return selectedRarity;
+        }
+
+        function openCrate(type) {
+            const cost = type === 'basic' ? gameState.basicCost : gameState.premiumCost;
+            if (!gameState.cheat.freeCrates && gameState.coins < cost) {
+                return;
+            }
+            
+            if (!gameState.cheat.freeCrates) {
+                gameState.coins -= cost;
+            }
+            updateUI();
+            
+            const raritiesList = type === 'basic' ? rarities : premiumRarities;
+            const selectedRarity = getRarityWithLuck(raritiesList);
+            const item = selectedRarity.items[Math.floor(Math.random() * selectedRarity.items.length)];
+            const valueMult = type === 'basic' ? 1 : 2;
+            const itemValueBonus = 1 + (gameState.itemValueLevel * 0.1);
+            const value = Math.floor(50 * selectedRarity.multiplier * valueMult * itemValueBonus);
+            
+            const overlay = document.getElementById('crate-opening');
+            const track = document.getElementById('crate-items-track');
+            const title = overlay.querySelector('.crate-opening-title');
+            const spinner = overlay.querySelector('.crate-spinner');
+            const result = document.getElementById('crate-result');
+            
+            title.textContent = 'Opening ' + (type === 'basic' ? 'Basic' : 'Premium') + ' Crate...';
+            title.style.display = 'block';
+            spinner.style.display = 'block';
+            result.classList.remove('active');
+            
+            const allItems = [];
+            for (const r of raritiesList) {
+                for (const i of r.items) {
+                    allItems.push({ item: i, rarity: r.color, rarityName: r.name });
+                }
+            }
+            
+            track.innerHTML = '';
+            const centerIndex = Math.floor(allItems.length / 2);
+            const spinItems = [];
+            
+            for (let i = 0; i < 60; i++) {
+                const randItem = allItems[Math.floor(Math.random() * allItems.length)];
+                spinItems.push(randItem);
+                const el = document.createElement('div');
+                el.className = 'crate-spin-item ' + randItem.rarity;
+                el.innerHTML = '<span>' + randItem.item + '</span><span>' + randItem.rarityName + '</span>';
+                track.appendChild(el);
+            }
+            
+            spinItems[centerIndex] = { item: item, rarity: selectedRarity.color, rarityName: selectedRarity.name };
+            const centerEl = track.children[centerIndex];
+            centerEl.className = 'crate-spin-item ' + selectedRarity.color;
+            centerEl.innerHTML = '<span>' + item + '</span><span>' + selectedRarity.name + '</span>';
+            
+            overlay.classList.add('active');
+            
+            let position = 0;
+            const itemWidth = 110;
+            const totalWidth = 60 * itemWidth;
+            // Center the selected item more reliably within the 300px crate-spinner viewport
+            // Spinner width is 300px (see .crate-spinner). Center it at 150px, offset by the index.
+            const crateSpinnerWidth = 300;
+            const spinCenter = crateSpinnerWidth / 2;
+            const stopPosition = -centerIndex * itemWidth + spinCenter - (itemWidth / 2);
+            
+            const spinDuration = 4000;
+            const startTime = performance.now();
+            
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / spinDuration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                position = stopPosition * easeOut;
+                track.style.transform = 'translateX(' + position + 'px)';
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    setTimeout(() => {
+                        title.style.display = 'none';
+                        spinner.style.display = 'none';
+                        
+                        const resultRarity = document.getElementById('crate-result-rarity');
+                        const resultItem = document.getElementById('crate-result-item');
+                        const resultValue = document.getElementById('crate-result-value');
+                        
+                        resultRarity.textContent = selectedRarity.name;
+                        resultRarity.className = 'crate-result-rarity ' + selectedRarity.color;
+                        resultItem.textContent = item;
+                        resultValue.textContent = '+' + value.toLocaleString() + ' 🪙';
+                        
+                        const itemKey = item + '|' + selectedRarity.color;
+                        if (!gameState.inventory[itemKey]) {
+                            gameState.inventory[itemKey] = {
+                                item: item,
+                                rarity: selectedRarity.color,
+                                rarityName: selectedRarity.name,
+                                value: value,
+                                quantity: 0
+                            };
+                        }
+                        gameState.inventory[itemKey].quantity++;
+                        gameState.inventory[itemKey].value = value;
+                        gameState.totalItemsCollected++;
+                        gameState.totalCratesOpened++;
+                        if (type === 'premium') {
+                            gameState.premiumCratesOpened = (gameState.premiumCratesOpened || 0) + 1;
+                        }
+                        if (selectedRarity.color === 'legendary') {
+                            gameState.legendaryItems = (gameState.legendaryItems || 0) + 1;
+                        } else if (['rare', 'epic'].includes(selectedRarity.color)) {
+                            gameState.rareItems = (gameState.rareItems || 0) + 1;
+                        }
+                        
+                        if (gameState.autoSell) {
+                            gameState.coins += value * gameState.inventory[itemKey].quantity;
+                            delete gameState.inventory[itemKey];
+                        }
+                        
+                        result.classList.add('active');
+                        
+                        checkQuests();
+                    }, 200);
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        function closeCrateOpening() {
+            document.getElementById('crate-opening').classList.remove('active');
+            updateUI();
+        }
+
+        document.getElementById('crate-claim-btn').addEventListener('click', closeCrateOpening);
+
+        function showCrateResult(rarity, item, value) {
+            const modal = document.getElementById('result-modal');
+            const rarityEl = document.getElementById('modal-rarity');
+            const itemEl = document.getElementById('modal-item');
+            const valueEl = document.getElementById('modal-value');
+            
+            rarityEl.textContent = rarity.name;
+            rarityEl.className = 'result-rarity rarity-' + rarity.color;
+            itemEl.textContent = item;
+            valueEl.textContent = '+' + value.toLocaleString() + ' 🪙';
+            
+            modal.className = 'result-modal active rarity-' + rarity.color;
+            
+            setTimeout(() => {
+                modal.classList.remove('active');
+            }, 2500);
+        }
+
+        function buyUpgrade(type) {
+            let cost = 0;
+            
+            switch (type) {
+                case 'click':
+                    cost = calculateUpgradeCost(100, gameState.clickLevel - 1, 1.5);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.clickLevel++;
+                    }
+                    break;
+                case 'auto':
+                    cost = calculateUpgradeCost(200, gameState.autoLevel, 1.5);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.autoLevel++;
+                    }
+                    break;
+                case 'mult':
+                    cost = calculateUpgradeCost(500, gameState.multLevel, 1.6);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.multLevel++;
+                        gameState.multiplier = 1 + (gameState.multLevel * 0.1);
+                    }
+                    break;
+                case 'basic':
+                    cost = calculateUpgradeCost(800, gameState.basicDiscount, 1.8);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.basicDiscount++;
+                    }
+                    break;
+                case 'premium':
+                    cost = calculateUpgradeCost(1500, gameState.premiumDiscount, 1.8);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.premiumDiscount++;
+                    }
+                    break;
+                case 'luck':
+                    cost = calculateUpgradeCost(2000, gameState.luckLevel, 1.7);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.luckLevel++;
+                    }
+                    break;
+                case 'value':
+                    cost = calculateUpgradeCost(1200, gameState.itemValueLevel, 1.5);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.itemValueLevel++;
+                    }
+                    break;
+                case 'spike':
+                    cost = calculateUpgradeCost(3000, gameState.spikeLevel, 1.8);
+                    if (gameState.coins >= cost) {
+                        gameState.coins -= cost;
+                        gameState.spikeLevel++;
+                    }
+                    break;
+            }
+            
+            gameState.clickValue = gameState.cheat.freeCrates ? gameState.cheat.clickValue : gameState.clickLevel;
+            gameState.autoRate = gameState.cheat.freeCrates ? gameState.cheat.autoRate : gameState.autoLevel;
+            
+            updateUI();
+        }
+
+        function toggleCheatPanel() {
+            document.getElementById('cheat-panel').classList.toggle('active');
+        }
+
+        function toggleInventory() {
+            document.getElementById('inventory-overlay').classList.toggle('active');
+            renderInventory();
+        }
+
+        function renderInventory() {
+            const grid = document.getElementById('inventory-grid');
+            const inventory = gameState.inventory;
+            const itemKeys = Object.keys(inventory);
+            
+            if (itemKeys.length === 0) {
+                grid.innerHTML = '<div class="inventory-empty">No items yet! Open some crates!</div>';
+                document.getElementById('inv-total-items').textContent = '0';
+                document.getElementById('inv-total-value').textContent = '0';
+                document.getElementById('sell-all-btn').disabled = true;
+                return;
+            }
+            
+            let totalItems = 0;
+            let totalValue = 0;
+            
+            grid.innerHTML = '';
+            
+            const rarityOrder = ['legendary', 'epic', 'rare', 'uncommon', 'common'];
+            itemKeys.sort((a, b) => {
+                const rarityA = inventory[a].rarity;
+                const rarityB = inventory[b].rarity;
+                return rarityOrder.indexOf(rarityA) - rarityOrder.indexOf(rarityB);
+            });
+            
+            for (const key of itemKeys) {
+                const item = inventory[key];
+                totalItems += item.quantity;
+                totalValue += item.value * item.quantity;
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = 'inventory-item ' + item.rarity;
+                itemEl.innerHTML = `
+                    <div class="inventory-item-qty">${item.quantity}</div>
+                    <div class="inventory-item-icon">${item.item}</div>
+                    <div class="inventory-item-rarity">${item.rarityName}</div>
+                    <div class="inventory-item-value">${item.value.toLocaleString()} 🪙</div>
+                    <button class="inventory-item-sell">Sell</button>
+                `;
+                
+                itemEl.querySelector('.inventory-item-sell').addEventListener('click', () => sellItem(key));
+                grid.appendChild(itemEl);
+            }
+            
+            document.getElementById('inv-total-items').textContent = totalItems.toLocaleString();
+            document.getElementById('inv-total-value').textContent = totalValue.toLocaleString();
+            document.getElementById('sell-all-btn').disabled = false;
+        }
+
+        function sellItem(key) {
+            const item = gameState.inventory[key];
+            if (item) {
+                const totalValue = item.value * item.quantity;
+                gameState.coins += totalValue;
+                delete gameState.inventory[key];
+                updateUI();
+                renderInventory();
+            }
+        }
+
+        function sellAllItems() {
+            const inventory = gameState.inventory;
+            for (const key in inventory) {
+                const item = inventory[key];
+                gameState.coins += item.value * item.quantity;
+            }
+            gameState.inventory = {};
+            updateUI();
+            renderInventory();
+        }
+
+        function toggleAutoSell() {
+            gameState.autoSell = !gameState.autoSell;
+            const toggle = document.getElementById('auto-sell-toggle');
+            if (gameState.autoSell) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+        }
+        
+        const settingsConfig = [
+            { key: 'darkTheme', name: 'Dark Theme', desc: 'Enable dark mode', type: 'toggle' },
+            { key: 'showQuestNotifications', name: 'Quest Notifications', desc: 'Show popup when completing quests', type: 'toggle' },
+            { key: 'showFloatingText', name: 'Floating Text', desc: 'Show +coins text on click', type: 'toggle' },
+            { key: 'showClickEffects', name: 'Click Effects', desc: 'Animate button on click', type: 'toggle' },
+            { key: 'autoSave', name: 'Auto Save', desc: 'Save game automatically', type: 'toggle' },
+            { key: 'soundEffects', name: 'Sound Effects', desc: 'Play sounds (future)', type: 'toggle' },
+            { key: 'showCrateAnimation', name: 'Crate Animation', desc: 'Show crate opening animation', type: 'toggle' },
+            { key: 'showInventoryOnCollect', name: 'Inventory Popups', desc: 'Show inventory changes', type: 'toggle' },
+            { key: 'compactShop', name: 'Compact Shop', desc: 'Smaller shop cards', type: 'toggle' },
+            { key: 'showStats', name: 'Show Stats', desc: 'Display click/auto stats', type: 'toggle' },
+            { key: 'showMultiplier', name: 'Show Multiplier', desc: 'Display multiplier in stats', type: 'toggle' },
+            { key: 'showAutoRate', name: 'Show Auto Rate', desc: 'Display auto-clicker rate', type: 'toggle' },
+            { key: 'showClickValue', name: 'Show Click Value', desc: 'Display click power value', type: 'toggle' },
+            { key: 'showInventoryCount', name: 'Inventory Badge', desc: 'Show item count on button', type: 'toggle' },
+            { key: 'animateCrateOpening', name: 'Animate Crates', desc: 'Animate items cycling', type: 'toggle' },
+            { key: 'showRarityGlow', name: 'Rarity Glow', desc: 'Show glow on rare items', type: 'toggle' },
+            { key: 'confirmCrateOpen', name: 'Confirm Crates', desc: 'Confirm before opening', type: 'toggle' },
+            { key: 'confirmSellAll', name: 'Confirm Sell All', desc: 'Confirm before selling all', type: 'toggle' },
+            { key: 'showDebugOnComplete', name: 'Quest Debug Msgs', desc: 'Show debug on completion', type: 'toggle' },
+            { key: 'showQuestProgress', name: 'Quest Progress', desc: 'Show progress percentages', type: 'toggle' },
+            { key: 'showRewardPopup', name: 'Reward Popups', desc: 'Show reward announcements', type: 'toggle' },
+            { key: 'invertScroll', name: 'Invert Scroll', desc: 'Reverse scroll direction', type: 'toggle' },
+            { key: 'reducedMotion', name: 'Reduced Motion', desc: 'Minimize animations', type: 'toggle' },
+            { key: 'highContrast', name: 'High Contrast', desc: 'Increase text contrast', type: 'toggle' },
+            { key: 'showTimestamps', name: 'Show Timestamps', desc: 'Show time in debug chat', type: 'toggle' },
+            { key: 'showItemValue', name: 'Item Values', desc: 'Show value in inventory', type: 'toggle' },
+            { key: 'showTotalEarned', name: 'Total Earnings', desc: 'Track total coins earned', type: 'toggle' },
+            { key: 'showClickCount', name: 'Click Counter', desc: 'Track total clicks', type: 'toggle' },
+            { key: 'showCrateCount', name: 'Crate Counter', desc: 'Track crates opened', type: 'toggle' },
+            { key: 'groupInventory', name: 'Group Items', desc: 'Stack identical items', type: 'toggle' },
+            { key: 'sortByRarity', name: 'Sort by Rarity', desc: 'Sort inventory by rarity', type: 'toggle' }
+        ];
+        
+        function renderSettings() {
+            const grid = document.getElementById('settings-grid');
+            grid.innerHTML = '';
+            
+            settingsConfig.forEach(setting => {
+                const item = document.createElement('div');
+                item.className = 'settings-item';
+                
+                if (setting.type === 'toggle') {
+                    item.innerHTML = `
+                        <div class="settings-item-label">
+                            <div class="settings-item-name">${setting.name}</div>
+                            <div class="settings-item-desc">${setting.desc}</div>
+                        </div>
+                        <div class="settings-toggle ${gameState.settings[setting.key] ? 'active' : ''}" data-key="${setting.key}"></div>
+                    `;
+                    item.querySelector('.settings-toggle').addEventListener('click', () => {
+                        gameState.settings[setting.key] = !gameState.settings[setting.key];
+                        applySetting(setting.key, gameState.settings[setting.key]);
+                        renderSettings();
+                    });
+                }
+                
+                grid.appendChild(item);
+            });
+        }
+
+        // Save/Export/Import helpers
+        function saveGame() {
+            try {
+                localStorage.setItem('idleLootSave', JSON.stringify({ gameState }));
+                addDebugMessage('Game saved to localStorage', 'success');
+            } catch (e) {
+                addDebugMessage('Save failed', 'error');
+            }
+        }
+
+        function exportGame() {
+            const data = JSON.stringify({ gameState }, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'idle-loot-save.json';
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            a.remove();
+        }
+
+        function importGameFromFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data && data.gameState) {
+                        Object.assign(gameState, data.gameState);
+                        updateUI();
+                        addDebugMessage('Imported save from file', 'success');
+                    } else {
+                        throw new Error('Invalid save file');
+                    }
+                } catch (err) {
+                    addDebugMessage('Import failed: invalid save file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function applySetting(key, value) {
+            switch (key) {
+                case 'darkTheme':
+                    document.body.classList.toggle('dark', value);
+                    break;
+                case 'reducedMotion':
+                    if (value) {
+                        document.documentElement.style.setProperty('--transition-speed', '0s');
+                    } else {
+                        document.documentElement.style.setProperty('--transition-speed', '0.2s');
+                    }
+                    break;
+            }
+            saveSettings();
+        }
+        
+        function saveSettings() {
+            localStorage.setItem('idleLootSettings', JSON.stringify(gameState.settings));
+        }
+        
+        function loadSettings() {
+            const saved = localStorage.getItem('idleLootSettings');
+            if (saved) {
+                const loaded = JSON.parse(saved);
+                Object.keys(loaded).forEach(key => {
+                    if (gameState.settings.hasOwnProperty(key)) {
+                        gameState.settings[key] = loaded[key];
+                    }
+                });
+            }
+            if (gameState.settings.darkTheme) {
+                document.body.classList.add('dark');
+            }
+        }
+        
+        function toggleSettings() {
+            const overlay = document.getElementById('settings-overlay');
+            overlay.classList.toggle('active');
+            if (overlay.classList.contains('active')) {
+                renderSettings();
+            }
+        }
+
+        // Bind UI controls for settings
+        document.getElementById('settings-btn').addEventListener('click', toggleSettings);
+        // Close button inside the modal
+        document.getElementById('settings-close').addEventListener('click', toggleSettings);
+
+        const debugCommands = {
+            '/givecoins': { desc: 'Give coins (amount)', usage: '/givecoins 1000' },
+            '/giveclick': { desc: 'Set click level (amount)', usage: '/giveclick 10' },
+            '/giveauto': { desc: 'Set auto clicker level (amount)', usage: '/giveauto 10' },
+            '/givemult': { desc: 'Set multiplier level (amount)', usage: '/givemult 5' },
+            '/giveluck': { desc: 'Set luck level (amount)', usage: '/giveluck 5' },
+            '/givevalue': { desc: 'Set item value level (amount)', usage: '/givevalue 5' },
+            '/givemspike': { desc: 'Set spike level (amount)', usage: '/givemspike 5' },
+            '/givebasic': { desc: 'Set basic discount level (amount)', usage: '/givebasic 5' },
+            '/givepremium': { desc: 'Set premium discount level (amount)', usage: '/givepremium 5' },
+            '/openbasic': { desc: 'Open basic crate (count)', usage: '/openbasic 1' },
+            '/openpremium': { desc: 'Open premium crate (count)', usage: '/openpremium 1' },
+            '/sellall': { desc: 'Sell all inventory items', usage: '/sellall' },
+            '/clearinv': { desc: 'Clear inventory', usage: '/clearinv' },
+            '/help': { desc: 'Show all commands', usage: '/help' }
+        };
+        
+        let debugAutocompleteIndex = -1;
+        
+        function addDebugMessage(text, type = 'system') {
+            const container = document.getElementById('debug-messages');
+            const msg = document.createElement('div');
+            msg.className = 'debug-msg ' + type;
+            msg.textContent = text;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+function toggleDebugChat() {
+    const chat = document.getElementById('debug-chat');
+    const hint = document.getElementById('debug-hint');
+    const wasActive = chat.classList.contains('active');
+    chat.classList.toggle('active');
+    hint.classList.remove('active');
+    if (!wasActive && chat.classList.contains('active')) {
+        document.getElementById('debug-input').focus();
+        // Start auto-close timer: close if no command executed in 10s
+        debugCommandExecuted = false;
+        if (debugAutoCloseTimer) clearTimeout(debugAutoCloseTimer);
+        debugAutoCloseTimer = setTimeout(() => {
+            if (!debugCommandExecuted && chat.classList.contains('active')) {
+                toggleDebugChat();
+            }
+        }, 10000);
+    } else if (wasActive && !chat.classList.contains('active')) {
+        // Closed
+        if (debugAutoCloseTimer) {
+            clearTimeout(debugAutoCloseTimer);
+            debugAutoCloseTimer = null;
+        }
+    }
+}
+        
+        function showDebugHint() {
+            const hint = document.getElementById('debug-hint');
+            hint.classList.add('active');
+            setTimeout(() => hint.classList.remove('active'), 3000);
+        }
+        
+        function showAutocomplete(input) {
+            const autocomplete = document.getElementById('debug-autocomplete');
+            autocomplete.innerHTML = '';
+            autocomplete.classList.remove('active');
+            debugAutocompleteIndex = -1;
+            
+            if (!input.startsWith('/')) return;
+            
+            const search = input.toLowerCase();
+            const matches = Object.keys(debugCommands).filter(cmd => cmd.includes(search));
+            
+            if (matches.length === 0) return;
+            
+            matches.forEach((cmd, index) => {
+                const item = document.createElement('div');
+                item.className = 'debug-autocomplete-item';
+                item.innerHTML = '<span>' + cmd + '</span><span>' + debugCommands[cmd].desc + '</span>';
+                item.addEventListener('click', () => {
+                    document.getElementById('debug-input').value = cmd + ' ';
+                    autocomplete.classList.remove('active');
+                    document.getElementById('debug-input').focus();
+                });
+                autocomplete.appendChild(item);
+            });
+            
+            autocomplete.classList.add('active');
+        }
+        
+        function executeCommand(input) {
+            const parts = input.trim().split(' ');
+            const cmd = parts[0].toLowerCase();
+            const arg = parts[1];
+
+            if (!debugCommands[cmd]) {
+                addDebugMessage('Unknown command: ' + cmd + ' (type /help for list)', 'error');
+                return;
+            }
+            // Mark that a valid command was entered for auto-close logic
+            debugCommandExecuted = true;
+            
+            switch (cmd) {
+                case '/givecoins':
+                    const coins = parseInt(arg);
+                    if (isNaN(coins) || coins <= 0) {
+                        addDebugMessage('Invalid amount! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.coins += coins;
+                    addDebugMessage('Added ' + coins.toLocaleString() + ' coins!', 'success');
+                    break;
+                    
+                case '/giveclick':
+                    const clickLvl = parseInt(arg);
+                    if (isNaN(clickLvl) || clickLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.clickLevel = Math.max(1, clickLvl);
+                    gameState.clickValue = gameState.cheat.freeCrates ? gameState.cheat.clickValue : gameState.clickLevel;
+                    addDebugMessage('Click level set to ' + clickLvl, 'success');
+                    break;
+                    
+                case '/giveauto':
+                    const autoLvl = parseInt(arg);
+                    if (isNaN(autoLvl) || autoLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.autoLevel = autoLvl;
+                    gameState.autoRate = gameState.cheat.freeCrates ? gameState.cheat.autoRate : gameState.autoLevel;
+                    addDebugMessage('Auto clicker level set to ' + autoLvl, 'success');
+                    break;
+                    
+                case '/givemult':
+                    const multLvl = parseInt(arg);
+                    if (isNaN(multLvl) || multLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.multLevel = multLvl;
+                    gameState.multiplier = 1 + (multLvl * 0.1);
+                    addDebugMessage('Multiplier level set to ' + multLvl + ' (' + gameState.multiplier.toFixed(1) + 'x)', 'success');
+                    break;
+                    
+                case '/giveluck':
+                    const luckLvl = parseInt(arg);
+                    if (isNaN(luckLvl) || luckLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.luckLevel = luckLvl;
+                    addDebugMessage('Luck level set to ' + luckLvl, 'success');
+                    break;
+                    
+                case '/givevalue':
+                    const valLvl = parseInt(arg);
+                    if (isNaN(valLvl) || valLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.itemValueLevel = valLvl;
+                    addDebugMessage('Item value level set to ' + valLvl + ' (+' + (valLvl * 10) + '%)', 'success');
+                    break;
+                    
+                case '/givemspike':
+                    const spikeLvl = parseInt(arg);
+                    if (isNaN(spikeLvl) || spikeLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.spikeLevel = spikeLvl;
+                    addDebugMessage('Spike level set to ' + spikeLvl + ' (' + spikeLvl + '%)', 'success');
+                    break;
+                    
+                case '/givebasic':
+                    const basicLvl = parseInt(arg);
+                    if (isNaN(basicLvl) || basicLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.basicDiscount = basicLvl;
+                    addDebugMessage('Basic discount set to ' + basicLvl + ' (-' + (basicLvl * 5) + '%)', 'success');
+                    break;
+                    
+                case '/givepremium':
+                    const premLvl = parseInt(arg);
+                    if (isNaN(premLvl) || premLvl < 0) {
+                        addDebugMessage('Invalid level! Usage: ' + debugCommands[cmd].usage, 'error');
+                        return;
+                    }
+                    gameState.premiumDiscount = premLvl;
+                    addDebugMessage('Premium discount set to ' + premLvl + ' (-' + (premLvl * 5) + '%)', 'success');
+                    break;
+                    
+                case '/openbasic':
+                    const basicCount = Math.min(parseInt(arg) || 1, 10);
+                    if (gameState.coins < gameState.basicCost * basicCount) {
+                        addDebugMessage('Not enough coins! Need ' + (gameState.basicCost * basicCount).toLocaleString(), 'error');
+                        return;
+                    }
+                    for (let i = 0; i < basicCount; i++) {
+                        openCrate('basic');
+                    }
+                    addDebugMessage('Opening ' + basicCount + ' basic crate(s)!', 'info');
+                    break;
+                    
+                case '/openpremium':
+                    const premCount = Math.min(parseInt(arg) || 1, 10);
+                    if (gameState.coins < gameState.premiumCost * premCount) {
+                        addDebugMessage('Not enough coins! Need ' + (gameState.premiumCost * premCount).toLocaleString(), 'error');
+                        return;
+                    }
+                    for (let i = 0; i < premCount; i++) {
+                        openCrate('premium');
+                    }
+                    addDebugMessage('Opening ' + premCount + ' premium crate(s)!', 'info');
+                    break;
+                    
+                case '/sellall':
+                    let totalValue = 0;
+                    for (const key in gameState.inventory) {
+                        const item = gameState.inventory[key];
+                        totalValue += item.value * item.quantity;
+                    }
+                    gameState.coins += totalValue;
+                    gameState.inventory = {};
+                    addDebugMessage('Sold all items for ' + totalValue.toLocaleString() + ' coins!', 'success');
+                    break;
+                    
+                case '/clearinv':
+                    gameState.inventory = {};
+                    addDebugMessage('Inventory cleared!', 'success');
+                    break;
+                    
+                case '/help':
+                    addDebugMessage('=== Available Commands ===', 'info');
+                    Object.keys(debugCommands).forEach(cmd => {
+                        addDebugMessage(cmd + ' - ' + debugCommands[cmd].desc, 'command');
+                    });
+                    return;
+            }
+            
+            updateUI();
+        }
+
+        function toggleBlackjack() {
+            document.getElementById('blackjack-overlay').classList.toggle('active');
+            if (document.getElementById('blackjack-overlay').classList.contains('active')) {
+                resetBlackjack();
+            }
+        }
+
+        function resetBlackjack() {
+            gameState.blackjack.gameOver = true;
+            gameState.blackjack.canHit = false;
+            gameState.blackjack.playerHand = [];
+            gameState.blackjack.dealerHand = [];
+            
+            document.getElementById('dealer-cards').innerHTML = '';
+            document.getElementById('player-cards').innerHTML = '';
+            document.getElementById('dealer-value').textContent = '';
+            document.getElementById('player-value').textContent = '';
+            document.getElementById('bj-result').textContent = '';
+            document.getElementById('bj-result').className = 'result-display';
+            document.getElementById('player-title').className = 'hand-title';
+            
+            document.getElementById('btn-deal').disabled = false;
+            document.getElementById('btn-hit').disabled = true;
+            document.getElementById('btn-stand').disabled = true;
+            
+            gameState.blackjack.bet = 100;
+            document.getElementById('bet-amount').textContent = '100';
+        }
+
+        function dealBlackjack() {
+            if (gameState.coins < gameState.blackjack.bet) {
+                document.getElementById('bj-result').textContent = 'Not enough coins!';
+                document.getElementById('bj-result').className = 'result-display lose';
+                return;
+            }
+            
+            gameState.coins -= gameState.blackjack.bet;
+            updateUI();
+            
+            gameState.blackjack.deck = createDeck();
+            gameState.blackjack.playerHand = [gameState.blackjack.deck.pop(), gameState.blackjack.deck.pop()];
+            gameState.blackjack.dealerHand = [gameState.blackjack.deck.pop(), gameState.blackjack.deck.pop()];
+            
+            gameState.blackjack.gameOver = false;
+            gameState.blackjack.canHit = true;
+            
+            renderBlackjack();
+            
+            document.getElementById('btn-deal').disabled = true;
+            document.getElementById('btn-hit').disabled = false;
+            document.getElementById('btn-stand').disabled = false;
+            
+            if (isBlackjack(gameState.blackjack.playerHand)) {
+                endBlackjack(true);
+            }
+        }
+
+        function hitBlackjack() {
+            if (gameState.blackjack.gameOver || !gameState.blackjack.canHit) return;
+            
+            gameState.blackjack.playerHand.push(gameState.blackjack.deck.pop());
+            renderBlackjack();
+            
+            if (calculateHandValue(gameState.blackjack.playerHand) > 21) {
+                endBlackjack(false);
+            }
+        }
+
+        function standBlackjack() {
+            if (gameState.blackjack.gameOver || !gameState.blackjack.canHit) return;
+            
+            gameState.blackjack.canHit = false;
+            
+            while (calculateHandValue(gameState.blackjack.dealerHand) < 17) {
+                gameState.blackjack.dealerHand.push(gameState.blackjack.deck.pop());
+            }
+            
+            renderBlackjack();
+            
+            const playerValue = calculateHandValue(gameState.blackjack.playerHand);
+            const dealerValue = calculateHandValue(gameState.blackjack.dealerHand);
+            
+            if (dealerValue > 21) {
+                endBlackjack(true);
+            } else if (playerValue > dealerValue) {
+                endBlackjack(true);
+            } else if (playerValue < dealerValue) {
+                endBlackjack(false);
+            } else {
+                endBlackjack('push');
+            }
+        }
+
+        function endBlackjack(result) {
+            gameState.blackjack.gameOver = true;
+            gameState.blackjack.canHit = false;
+            
+            const resultEl = document.getElementById('bj-result');
+            const playerTitle = document.getElementById('player-title');
+            const isBJ = isBlackjack(gameState.blackjack.playerHand);
+            
+            if (result === true) {
+                const winAmount = gameState.blackjack.bet * (isBJ ? 3 : 2);
+                gameState.coins += winAmount;
+                resultEl.textContent = (isBJ ? 'BLACKJACK!' : 'YOU WIN!') + ' +' + winAmount.toLocaleString() + ' 🪙';
+                resultEl.className = 'result-display win';
+                playerTitle.className = 'hand-title winner';
+            } else if (result === 'push') {
+                gameState.coins += gameState.blackjack.bet;
+                resultEl.textContent = 'PUSH! +' + gameState.blackjack.bet.toLocaleString() + ' 🪙';
+                resultEl.className = 'result-display push';
+            } else {
+                resultEl.textContent = 'YOU LOSE!';
+                resultEl.className = 'result-display lose';
+                playerTitle.className = 'hand-title loser';
+            }
+            
+            document.getElementById('btn-hit').disabled = true;
+            document.getElementById('btn-stand').disabled = true;
+            document.getElementById('btn-deal').disabled = false;
+            
+            updateUI();
+            
+            if (Math.random() * 100 > gameState.cheat.winRate) {
+                if (result === true) {
+                    gameState.coins -= (isBJ ? gameState.blackjack.bet * 3 : gameState.blackjack.bet * 2);
+                    resultEl.textContent = 'CHEAT ADJUSTED: Actually lost!';
+                    updateUI();
+                }
+            }
+        }
+
+        function renderBlackjack() {
+            const dealerCards = document.getElementById('dealer-cards');
+            const playerCards = document.getElementById('player-cards');
+            
+            dealerCards.innerHTML = '';
+            for (let i = 0; i < gameState.blackjack.dealerHand.length; i++) {
+                const card = gameState.blackjack.dealerHand[i];
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                if (card.suit === '♥️' || card.suit === '♦️') {
+                    cardEl.classList.add('red');
+                } else {
+                    cardEl.classList.add('black');
+                }
+                
+                if (i === 0 && !gameState.blackjack.gameOver) {
+                    cardEl.classList.add('card-back');
+                    cardEl.textContent = '?';
+                } else {
+                    cardEl.textContent = card.value + card.suit;
+                }
+                
+                dealerCards.appendChild(cardEl);
+            }
+            
+            playerCards.innerHTML = '';
+            for (const card of gameState.blackjack.playerHand) {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                if (card.suit === '♥️' || card.suit === '♦️') {
+                    cardEl.classList.add('red');
+                } else {
+                    cardEl.classList.add('black');
+                }
+                cardEl.textContent = card.value + card.suit;
+                playerCards.appendChild(cardEl);
+            }
+            
+            document.getElementById('dealer-value').textContent = gameState.blackjack.gameOver ? 
+                calculateHandValue(gameState.blackjack.dealerHand) : '?';
+            document.getElementById('player-value').textContent = calculateHandValue(gameState.blackjack.playerHand);
+        }
+
+        function adjustBet(amount) {
+            gameState.blackjack.bet = Math.max(10, Math.min(100000, gameState.blackjack.bet + amount));
+            document.getElementById('bet-amount').textContent = gameState.blackjack.bet.toLocaleString();
+        }
+
+        document.getElementById('click-btn').addEventListener('click', handleClick);
+        document.getElementById('crate-basic').addEventListener('click', () => openCrate('basic'));
+        document.getElementById('crate-premium').addEventListener('click', () => openCrate('premium'));
+        
+        document.getElementById('upgrade-click').addEventListener('click', () => buyUpgrade('click'));
+        document.getElementById('upgrade-auto').addEventListener('click', () => buyUpgrade('auto'));
+        document.getElementById('upgrade-mult').addEventListener('click', () => buyUpgrade('mult'));
+        document.getElementById('upgrade-basic').addEventListener('click', () => buyUpgrade('basic'));
+        document.getElementById('upgrade-premium').addEventListener('click', () => buyUpgrade('premium'));
+        document.getElementById('upgrade-luck').addEventListener('click', () => buyUpgrade('luck'));
+        document.getElementById('upgrade-value').addEventListener('click', () => buyUpgrade('value'));
+        document.getElementById('upgrade-spike').addEventListener('click', () => buyUpgrade('spike'));
+        
+        document.getElementById('inventory-btn').addEventListener('click', toggleInventory);
+        document.getElementById('inventory-close').addEventListener('click', toggleInventory);
+        document.getElementById('sell-all-btn').addEventListener('click', sellAllItems);
+        document.getElementById('auto-sell-toggle').addEventListener('click', toggleAutoSell);
+        
+        document.getElementById('debug-close').addEventListener('click', toggleDebugChat);
+        document.getElementById('debug-input').addEventListener('input', (e) => showAutocomplete(e.target.value));
+        document.getElementById('debug-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const input = e.target.value.trim();
+                if (input) {
+                    addDebugMessage('> ' + input, 'command');
+                    executeCommand(input);
+                    e.target.value = '';
+                    document.getElementById('debug-autocomplete').classList.remove('active');
+                }
+            } else if (e.key === 'Tab') {
+                const autocomplete = document.getElementById('debug-autocomplete');
+                if (autocomplete.classList.contains('active')) {
+                    const items = autocomplete.querySelectorAll('.debug-autocomplete-item');
+                    if (items.length > 0) {
+                        items[Math.max(0, debugAutocompleteIndex)].click();
+                    }
+                }
+            } else if (e.key === 'Escape') {
+                document.getElementById('debug-autocomplete').classList.remove('active');
+            }
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'q' && !e.target.matches('input, textarea')) {
+                toggleDebugChat();
+                e.preventDefault();
+                e.stopPropagation();
+            } else if (e.key.toLowerCase() === 'c' && !e.target.matches('input, textarea')) {
+                toggleCheatPanel();
+            } else if (e.key.toLowerCase() === 'b' && !e.target.matches('input, textarea')) {
+                toggleBlackjack();
+            } else if (e.key === '/' && !e.target.matches('input, textarea')) {
+                e.preventDefault();
+                toggleDebugChat();
+                document.getElementById('debug-input').value = '/';
+                showAutocomplete('/');
+            }
+        });
+        
+        document.getElementById('cheat-click').addEventListener('input', (e) => {
+            gameState.cheat.clickValue = parseInt(e.target.value);
+            gameState.clickValue = gameState.cheat.clickValue + (gameState.clickLevel - 1);
+            updateUI();
+        });
+        
+        document.getElementById('cheat-auto').addEventListener('input', (e) => {
+            gameState.cheat.autoRate = parseInt(e.target.value);
+            gameState.autoRate = gameState.cheat.autoRate + gameState.autoLevel;
+            updateUI();
+        });
+        
+        document.getElementById('cheat-win').addEventListener('input', (e) => {
+            gameState.cheat.winRate = parseInt(e.target.value);
+            updateUI();
+        });
+        
+        document.getElementById('cheat-free-crate').addEventListener('click', () => {
+            gameState.cheat.freeCrates = !gameState.cheat.freeCrates;
+            updateUI();
+        });
+        
+        document.getElementById('btn-deal').addEventListener('click', dealBlackjack);
+        document.getElementById('btn-hit').addEventListener('click', hitBlackjack);
+        document.getElementById('btn-stand').addEventListener('click', standBlackjack);
+        
+        document.getElementById('bet-minus').addEventListener('click', () => adjustBet(-100));
+        document.getElementById('bet-plus').addEventListener('click', () => adjustBet(100));
+        
+        setInterval(() => {
+            const autoEarned = gameState.cheat.freeCrates ? gameState.cheat.autoRate : gameState.autoRate;
+            gameState.coins += autoEarned * gameState.multiplier;
+            updateUI();
+        }, 1000);
+        // Wire up Save/Export/Import buttons (UI added in settings modal)
+        const _saveBtn = document.getElementById('save-btn');
+        const _exportBtn = document.getElementById('export-btn');
+        const _importBtn = document.getElementById('import-btn');
+        const _importFile = document.getElementById('import-file');
+        if (_saveBtn) _saveBtn.addEventListener('click', saveGame);
+        if (_exportBtn) _exportBtn.addEventListener('click', exportGame);
+        if (_importBtn) _importBtn.addEventListener('click', () => _importFile && _importFile.click());
+        if (_importFile) _importFile.addEventListener('change', (e) => {
+            const f = e.target.files && e.target.files[0];
+            if (f) importGameFromFile(f);
+            e.target.value = '';
+        });
+        // Load persisted settings (if any) and apply the theme before the first UI render
+        loadSettings();
+        updateUI();
+    </script>
+
+
+</body></html>
